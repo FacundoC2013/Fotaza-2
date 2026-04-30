@@ -2,22 +2,36 @@ USE fotaza2;
 
 SET FOREIGN_KEY_CHECKS = 0;
 
-TRUNCATE TABLE mensajes;
-TRUNCATE TABLE intereses_compra;
-TRUNCATE TABLE coleccion_publicacion;
-TRUNCATE TABLE colecciones;
-TRUNCATE TABLE notificaciones;
-TRUNCATE TABLE seguidores;
-TRUNCATE TABLE denuncias_comentarios;
-TRUNCATE TABLE denuncias_imagenes;
-TRUNCATE TABLE valoraciones;
-TRUNCATE TABLE comentarios;
-TRUNCATE TABLE publicacion_etiqueta;
-TRUNCATE TABLE etiquetas;
-TRUNCATE TABLE imagenes;
-TRUNCATE TABLE publicaciones;
-TRUNCATE TABLE usuarios;
-TRUNCATE TABLE roles;
+DELETE FROM mensajes;
+DELETE FROM intereses_compra;
+DELETE FROM coleccion_publicacion;
+DELETE FROM colecciones;
+DELETE FROM notificaciones;
+DELETE FROM seguidores;
+DELETE FROM denuncias_comentarios;
+DELETE FROM denuncias_imagenes;
+DELETE FROM valoraciones;
+DELETE FROM comentarios;
+DELETE FROM publicacion_etiqueta;
+DELETE FROM etiquetas;
+DELETE FROM imagenes;
+DELETE FROM publicaciones;
+DELETE FROM usuarios;
+DELETE FROM roles;
+
+ALTER TABLE roles AUTO_INCREMENT = 1;
+ALTER TABLE usuarios AUTO_INCREMENT = 1;
+ALTER TABLE publicaciones AUTO_INCREMENT = 1;
+ALTER TABLE imagenes AUTO_INCREMENT = 1;
+ALTER TABLE etiquetas AUTO_INCREMENT = 1;
+ALTER TABLE comentarios AUTO_INCREMENT = 1;
+ALTER TABLE valoraciones AUTO_INCREMENT = 1;
+ALTER TABLE denuncias_imagenes AUTO_INCREMENT = 1;
+ALTER TABLE denuncias_comentarios AUTO_INCREMENT = 1;
+ALTER TABLE notificaciones AUTO_INCREMENT = 1;
+ALTER TABLE colecciones AUTO_INCREMENT = 1;
+ALTER TABLE intereses_compra AUTO_INCREMENT = 1;
+ALTER TABLE mensajes AUTO_INCREMENT = 1;
 
 SET FOREIGN_KEY_CHECKS = 1;
 
@@ -76,7 +90,7 @@ INSERT INTO imagenes (
 (1, 1, 'Sierras de La Punta', 'Vista abierta de las sierras y el cielo de La Punta.', '/uploads/imagenes/seed/paisajes-la-punta-1.jpg', 'sin_copyright', FALSE, NULL, TRUE),
 (2, 1, 'Camino en La Punta', 'Camino con vista al paisaje puntano.', '/uploads/imagenes/seed/paisajes-la-punta-2.jpg', 'sin_copyright', FALSE, NULL, TRUE),
 (3, 2, 'Edificio histórico', 'Detalle arquitectónico de Buenos Aires.', '/uploads/imagenes/seed/arquitectura-buenos-aires-1.jpg', 'con_copyright', TRUE, 'Candela Garcia', TRUE),
-(4, 3, 'Momma colores', 'Imagen artística con composición de colores.', '/uploads/imagenes/seed/arte-momma-1.jpg', 'con_copyright', TRUE, 'Valentin Casas', TRUE),
+(4, 3, 'Momma colores', 'Imagen artística con composición de colores.', '/uploads/imagenes/seed/arte-momma-1.jpg', 'con_copyright', TRUE, 'Candela Garcia', TRUE),
 (5, 4, 'Luces de ciudad', 'Fotografía nocturna de una ciudad iluminada.', '/uploads/imagenes/seed/ciudad-noche-1.jpg', 'sin_copyright', FALSE, NULL, TRUE),
 (6, 5, 'Paisaje serrano', 'Paisaje natural de San Luis.', '/uploads/imagenes/seed/paisajes-san-luis-1.jpg', 'sin_copyright', FALSE, NULL, TRUE);
 
