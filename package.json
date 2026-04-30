@@ -7,7 +7,8 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node src/app.js",
+    "db:init": "node scripts/init-db.js"
   },
   "repository": {
     "type": "git",
@@ -22,6 +23,7 @@
   },
   "homepage": "https://github.com/FacundoC2013/Fotaza-2#readme",
   "dependencies": {
+    "dotenv": "^17.4.2",
     "mysql2": "^3.22.3"
   }
 }
