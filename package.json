@@ -20,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/FacundoC2013/Fotaza-2/issues"
   },
-  "homepage": "https://github.com/FacundoC2013/Fotaza-2#readme"
+  "homepage": "https://github.com/FacundoC2013/Fotaza-2#readme",
+  "dependencies": {
+    "mysql2": "^3.22.3"
+  }
 }

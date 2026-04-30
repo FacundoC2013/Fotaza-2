@@ -1,23 +1,27 @@
-BEGIN;
+USE fotaza2;
 
-TRUNCATE TABLE
-    mensajes,
-    intereses_compra,
-    coleccion_publicacion,
-    colecciones,
-    notificaciones,
-    seguidores,
-    denuncias_comentarios,
-    denuncias_imagenes,
-    valoraciones,
-    comentarios,
-    publicacion_etiqueta,
-    etiquetas,
-    imagenes,
-    publicaciones,
-    usuarios,
-    roles
-RESTART IDENTITY CASCADE;
+SET FOREIGN_KEY_CHECKS = 0;
+
+TRUNCATE TABLE mensajes;
+TRUNCATE TABLE intereses_compra;
+TRUNCATE TABLE coleccion_publicacion;
+TRUNCATE TABLE colecciones;
+TRUNCATE TABLE notificaciones;
+TRUNCATE TABLE seguidores;
+TRUNCATE TABLE denuncias_comentarios;
+TRUNCATE TABLE denuncias_imagenes;
+TRUNCATE TABLE valoraciones;
+TRUNCATE TABLE comentarios;
+TRUNCATE TABLE publicacion_etiqueta;
+TRUNCATE TABLE etiquetas;
+TRUNCATE TABLE imagenes;
+TRUNCATE TABLE publicaciones;
+TRUNCATE TABLE usuarios;
+TRUNCATE TABLE roles;
+
+SET FOREIGN_KEY_CHECKS = 1;
+
+START TRANSACTION;
 
 INSERT INTO roles (id_rol, nombre, descripcion) VALUES
 (1, 'usuario', 'Usuario registrado de la aplicación'),
@@ -229,20 +233,6 @@ INSERT INTO mensajes (
 (4, 2, 3, 'Sí, podemos hablarlo sin problema.', FALSE),
 (5, 3, 9, 'Esto es arte, me interesa saber si la puedo usar.', FALSE),
 (6, 3, 6, 'Sí, la imagen tiene copyright pero podemos llegar a un acuerdo.', FALSE);
-
-SELECT setval(pg_get_serial_sequence('roles', 'id_rol'), (SELECT MAX(id_rol) FROM roles));
-SELECT setval(pg_get_serial_sequence('usuarios', 'id_usuario'), (SELECT MAX(id_usuario) FROM usuarios));
-SELECT setval(pg_get_serial_sequence('publicaciones', 'id_publicacion'), (SELECT MAX(id_publicacion) FROM publicaciones));
-SELECT setval(pg_get_serial_sequence('imagenes', 'id_imagen'), (SELECT MAX(id_imagen) FROM imagenes));
-SELECT setval(pg_get_serial_sequence('etiquetas', 'id_etiqueta'), (SELECT MAX(id_etiqueta) FROM etiquetas));
-SELECT setval(pg_get_serial_sequence('comentarios', 'id_comentario'), (SELECT MAX(id_comentario) FROM comentarios));
-SELECT setval(pg_get_serial_sequence('valoraciones', 'id_valoracion'), (SELECT MAX(id_valoracion) FROM valoraciones));
-SELECT setval(pg_get_serial_sequence('denuncias_imagenes', 'id_denuncia_imagen'), (SELECT MAX(id_denuncia_imagen) FROM denuncias_imagenes));
-SELECT setval(pg_get_serial_sequence('denuncias_comentarios', 'id_denuncia_comentario'), (SELECT MAX(id_denuncia_comentario) FROM denuncias_comentarios));
-SELECT setval(pg_get_serial_sequence('notificaciones', 'id_notificacion'), (SELECT MAX(id_notificacion) FROM notificaciones));
-SELECT setval(pg_get_serial_sequence('colecciones', 'id_coleccion'), (SELECT MAX(id_coleccion) FROM colecciones));
-SELECT setval(pg_get_serial_sequence('intereses_compra', 'id_interes'), (SELECT MAX(id_interes) FROM intereses_compra));
-SELECT setval(pg_get_serial_sequence('mensajes', 'id_mensaje'), (SELECT MAX(id_mensaje) FROM mensajes));
 
 COMMIT;
 
