@@ -52,15 +52,15 @@ INSERT INTO usuarios (
     biografia,
     estado
 ) VALUES
-(1, 3, 'Facundo', 'Calderon', 'facundo@fotaza.com', '$2b$10$cfpp5I945jX8fVe1GfmnrOV8pybY5qYDR92K8WYw587HhoLHep/Ge', 'Me gusta la fotografía urbana, los paisajes y el desarrollo web.', 'activo'),
-(2, 2, 'Jaquelina', 'Velazquez', 'jaquelina@fotaza.com', '$2b$10$cfpp5I945jX8fVe1GfmnrOV8pybY5qYDR92K8WYw587HhoLHep/Ge', 'Validadora de contenido. Interesada en fotografía artística y paisajes.', 'activo'),
-(3, 1, 'Candela', 'Garcia', 'candela@fotaza.com', '$2b$10$cfpp5I945jX8fVe1GfmnrOV8pybY5qYDR92K8WYw587HhoLHep/Ge', 'Amante de las fotos de ciudad, arquitectura y momentos cotidianos.', 'activo'),
-(4, 1, 'Apolo', 'Loco', 'apolo@fotaza.com', '$2b$10$cfpp5I945jX8fVe1GfmnrOV8pybY5qYDR92K8WYw587HhoLHep/Ge', 'Usuario curioso. Le gustan las fotos raras, urbanas y espontáneas.', 'activo'),
-(5, 1, 'Negra', 'Fotaza', 'negra@fotaza.com', '$2b$10$cfpp5I945jX8fVe1GfmnrOV8pybY5qYDR92K8WYw587HhoLHep/Ge', 'Me gusta comentar fotos y guardar publicaciones que me inspiran.', 'activo'),
-(6, 1, 'Valentin', 'Casas', 'valentin@fotaza.com', '$2b$10$cfpp5I945jX8fVe1GfmnrOV8pybY5qYDR92K8WYw587HhoLHep/Ge', 'Fotógrafo aficionado. Me interesa el arte, la luz y la composición.', 'activo'),
-(7, 1, 'Ezequiel', 'Velazquez', 'ezequiel@fotaza.com', '$2b$10$cfpp5I945jX8fVe1GfmnrOV8pybY5qYDR92K8WYw587HhoLHep/Ge', 'Me gustan las fotos nocturnas y los paisajes de San Luis.', 'activo'),
-(8, 1, 'Ruth', 'Velazquez', 'ruth@fotaza.com', '$2b$10$cfpp5I945jX8fVe1GfmnrOV8pybY5qYDR92K8WYw587HhoLHep/Ge', 'Disfruto sacar fotos de viajes, naturaleza y arquitectura.', 'activo'),
-(9, 1, 'Abril', 'Garcia', 'abril@fotaza.com', '$2b$10$cfpp5I945jX8fVe1GfmnrOV8pybY5qYDR92K8WYw587HhoLHep/Ge', 'Me interesa descubrir fotos nuevas y coleccionar ideas visuales.', 'activo');
+(1, 3, 'Facundo', 'Calderon', 'facundo@fotaza.com', '$2b$10$K8djzu9gbS2Ssdk09aw9VOze2OPPSw5hRoT2xrwhleO4N6ofqAY9q', 'Me gusta la fotografía urbana, los paisajes y el desarrollo web.', 'activo'),
+(2, 2, 'Jaquelina', 'Velazquez', 'jaquelina@fotaza.com', '$2b$10$K8djzu9gbS2Ssdk09aw9VOze2OPPSw5hRoT2xrwhleO4N6ofqAY9q', 'Validadora de contenido. Interesada en fotografía artística y paisajes.', 'activo'),
+(3, 1, 'Candela', 'Garcia', 'candela@fotaza.com', '$2b$10$K8djzu9gbS2Ssdk09aw9VOze2OPPSw5hRoT2xrwhleO4N6ofqAY9q', 'Amante de las fotos de ciudad, arquitectura y momentos cotidianos.', 'activo'),
+(4, 1, 'Apolo', 'Loco', 'apolo@fotaza.com', '$2b$10$K8djzu9gbS2Ssdk09aw9VOze2OPPSw5hRoT2xrwhleO4N6ofqAY9q', 'Usuario curioso. Le gustan las fotos raras, urbanas y espontáneas.', 'activo'),
+(5, 1, 'Negra', 'Fotaza', 'negra@fotaza.com', '$2b$10$K8djzu9gbS2Ssdk09aw9VOze2OPPSw5hRoT2xrwhleO4N6ofqAY9q', 'Me gusta comentar fotos y guardar publicaciones que me inspiran.', 'activo'),
+(6, 1, 'Valentin', 'Casas', 'valentin@fotaza.com', '$2b$10$K8djzu9gbS2Ssdk09aw9VOze2OPPSw5hRoT2xrwhleO4N6ofqAY9q', 'Fotógrafo aficionado. Me interesa el arte, la luz y la composición.', 'activo'),
+(7, 1, 'Ezequiel', 'Velazquez', 'ezequiel@fotaza.com', '$2b$10$K8djzu9gbS2Ssdk09aw9VOze2OPPSw5hRoT2xrwhleO4N6ofqAY9q', 'Me gustan las fotos nocturnas y los paisajes de San Luis.', 'activo'),
+(8, 1, 'Ruth', 'Velazquez', 'ruth@fotaza.com', '$2b$10$K8djzu9gbS2Ssdk09aw9VOze2OPPSw5hRoT2xrwhleO4N6ofqAY9q', 'Disfruto sacar fotos de viajes, naturaleza y arquitectura.', 'activo'),
+(9, 1, 'Abril', 'Garcia', 'abril@fotaza.com', '$2b$10$K8djzu9gbS2Ssdk09aw9VOze2OPPSw5hRoT2xrwhleO4N6ofqAY9q', 'Me interesa descubrir fotos nuevas y coleccionar ideas visuales.', 'activo');
 
 INSERT INTO publicaciones (
     id_publicacion,
