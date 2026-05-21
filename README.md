@@ -7,7 +7,7 @@ Proyecto integrador de Programación Web II.
 - Node.js
 - Express
 - PUG
-- PostgreSQL
+- MYSQL
 - Bootstrap
 - Express-session
 

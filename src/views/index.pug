@@ -15,19 +15,28 @@ block contenido
         .col-md-4.mb-4
           .card.h-100
             .card-body
-              h5.card-title= publicacion.titulo_publicacion
+              h5.card-title= publicacion.titulo
 
-              if publicacion.titulo_imagen
-                h6.card-subtitle.mb-2.text-muted= publicacion.titulo_imagen
+              if publicacion.imagenes && publicacion.imagenes.length > 0
+                h6.card-subtitle.mb-2.text-muted= publicacion.imagenes[0].titulo
+                p.mb-1
+                  strong Licencia:
+                  |  #{publicacion.imagenes[0].licencia}
+              else
+                p.text-muted Sin imagen cargada
 
               p.card-text= publicacion.descripcion
 
-              p.mb-1
-                strong Autor:
-                |  #{publicacion.nombre} #{publicacion.apellido}
+              if publicacion.autor
+                p.mb-1
+                  strong Autor:
+                  |  #{publicacion.autor.nombre} #{publicacion.autor.apellido}
 
-              p.mb-1
-                strong Licencia:
-                |  #{publicacion.licencia}
+              if publicacion.etiquetas && publicacion.etiquetas.length > 0
+                p.mb-1
+                  strong Etiquetas:
+                  | 
+                  each etiqueta in publicacion.etiquetas
+                    span.badge.bg-secondary.me-1= etiqueta.nombre
 
               small.text-muted= publicacion.fecha_creacion
