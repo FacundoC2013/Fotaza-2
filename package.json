@@ -8,6 +8,7 @@
   },
   "scripts": {
     "start": "node src/app.js",
+    "dev": "nodemon src/app.js",
     "db:init": "node scripts/init-db.js"
   },
   "repository": {
@@ -23,7 +24,15 @@
   },
   "homepage": "https://github.com/FacundoC2013/Fotaza-2#readme",
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "dotenv": "^17.4.2",
-    "mysql2": "^3.22.3"
+    "express": "^5.2.1",
+    "express-session": "^1.19.0",
+    "multer": "^2.1.1",
+    "mysql2": "^3.22.3",
+    "pug": "^3.0.4"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
   }
 }

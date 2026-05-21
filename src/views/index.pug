@@ -1,0 +1,33 @@
+extends layout
+
+block contenido
+  h1.mb-3 Fotaza 2
+  p.text-muted Comunidad para publicar, compartir y descubrir fotografías.
+
+  h2.mt-4 Publicaciones recientes
+
+  if publicaciones.length === 0
+    .alert.alert-info
+      | No hay publicaciones cargadas todavía.
+  else
+    .row
+      each publicacion in publicaciones
+        .col-md-4.mb-4
+          .card.h-100
+            .card-body
+              h5.card-title= publicacion.titulo_publicacion
+
+              if publicacion.titulo_imagen
+                h6.card-subtitle.mb-2.text-muted= publicacion.titulo_imagen
+
+              p.card-text= publicacion.descripcion
+
+              p.mb-1
+                strong Autor:
+                |  #{publicacion.nombre} #{publicacion.apellido}
+
+              p.mb-1
+                strong Licencia:
+                |  #{publicacion.licencia}
+
+              small.text-muted= publicacion.fecha_creacion
