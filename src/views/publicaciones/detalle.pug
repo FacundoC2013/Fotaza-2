@@ -1,0 +1,75 @@
+extends ../layout
+
+block contenido
+  a.btn.btn-secondary.mb-3(href="/") Volver a la home
+
+  .card.mb-4
+    .card-body
+      h1.card-title= publicacion.titulo
+
+      if publicacion.descripcion
+        p.card-text= publicacion.descripcion
+      else
+        p.text-muted Sin descripción.
+
+      if publicacion.autor
+        p.mb-1
+          strong Autor:
+          |  #{publicacion.autor.nombre} #{publicacion.autor.apellido}
+
+      if publicacion.etiquetas && publicacion.etiquetas.length > 0
+        p.mt-3.mb-1
+          strong Etiquetas:
+        each etiqueta in publicacion.etiquetas
+          span.badge.bg-secondary.me-1= etiqueta.nombre
+      else
+        p.text-muted Esta publicación no tiene etiquetas.
+
+  h2 Imágenes de la publicación
+
+  if !publicacion.imagenes || publicacion.imagenes.length === 0
+    .alert.alert-info
+      | Esta publicación no tiene imágenes cargadas.
+  else
+    .row
+      each imagen in publicacion.imagenes
+        .col-md-6.mb-4
+          .card.h-100
+            .card-body
+              h5.card-title= imagen.titulo || "Imagen sin título"
+
+              if imagen.descripcion
+                p.card-text= imagen.descripcion
+
+              p.mb-1
+                strong Ruta:
+                |  #{imagen.ruta_archivo}
+
+              p.mb-1
+                strong Licencia:
+                |  #{imagen.licencia}
+
+              if imagen.marca_agua
+                p.mb-1
+                  strong Marca de agua:
+                  |  Sí
+                if imagen.texto_marca_agua
+                  p.mb-1
+                    strong Texto:
+                    |  #{imagen.texto_marca_agua}
+              else
+                p.mb-1
+                  strong Marca de agua:
+                  |  No
+
+              p.mb-1
+                strong Comentarios:
+                if imagen.comentarios_abiertos
+                  |  abiertos
+                else
+                  |  cerrados
+
+              .mt-3.d-flex.gap-2
+                button.btn.btn-outline-primary.btn-sm(type="button", disabled) Comentar
+                button.btn.btn-outline-success.btn-sm(type="button", disabled) Valorar imagen
+                button.btn.btn-outline-warning.btn-sm(type="button", disabled) Me interesa

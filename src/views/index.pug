@@ -25,7 +25,10 @@ block contenido
               else
                 p.text-muted Sin imagen cargada
 
-              p.card-text= publicacion.descripcion
+              if publicacion.descripcion
+                p.card-text= publicacion.descripcion
+              else
+                p.text-muted Sin descripción.
 
               if publicacion.autor
                 p.mb-1
@@ -40,3 +43,6 @@ block contenido
                     span.badge.bg-secondary.me-1= etiqueta.nombre
 
               small.text-muted= publicacion.fecha_creacion
+
+              .mt-3
+                a.btn.btn-primary.btn-sm(href=`/publicaciones/${publicacion.id_publicacion}`) Ver detalle
