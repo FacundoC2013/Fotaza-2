@@ -6,6 +6,7 @@ const Publicacion = require("./Publicacion");
 const Imagen = require("./Imagen");
 const Etiqueta = require("./Etiqueta");
 const PublicacionEtiqueta = require("./PublicacionEtiqueta");
+const Comentario = require("./Comentario");
 
 // Rol - Usuario
 Rol.hasMany(Usuario, {
@@ -55,6 +56,28 @@ Etiqueta.belongsToMany(Publicacion, {
   as: "publicaciones",
 });
 
+// Imagen - Comentario
+Imagen.hasMany(Comentario, {
+  foreignKey: "id_imagen",
+  as: "comentarios",
+});
+
+Comentario.belongsTo(Imagen, {
+  foreignKey: "id_imagen",
+  as: "imagen",
+});
+
+// Usuario - Comentario
+Usuario.hasMany(Comentario, {
+  foreignKey: "id_usuario",
+  as: "comentarios",
+});
+
+Comentario.belongsTo(Usuario, {
+  foreignKey: "id_usuario",
+  as: "autorComentario",
+});
+
 module.exports = {
   sequelize,
   Rol,
@@ -63,4 +86,5 @@ module.exports = {
   Imagen,
   Etiqueta,
   PublicacionEtiqueta,
+  Comentario,
 };

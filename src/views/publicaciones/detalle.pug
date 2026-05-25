@@ -18,10 +18,11 @@ block contenido
           |  #{publicacion.autor.nombre} #{publicacion.autor.apellido}
 
       if publicacion.etiquetas && publicacion.etiquetas.length > 0
-        p.mt-3.mb-1
+        p.mt-3.mb-2
           strong Etiquetas:
-        each etiqueta in publicacion.etiquetas
-          span.badge.bg-secondary.me-1= etiqueta.nombre
+        .d-flex.flex-wrap.gap-2
+          each etiqueta in publicacion.etiquetas
+            span.badge.bg-secondary= etiqueta.nombre
       else
         p.text-muted Esta publicación no tiene etiquetas.
 
@@ -69,7 +70,41 @@ block contenido
                 else
                   |  cerrados
 
+              hr
+
+              h6 Comentarios
+
+              if imagen.comentarios && imagen.comentarios.length > 0
+                each comentario in imagen.comentarios
+                  .border.rounded.p-2.mb-2
+                    if comentario.autorComentario
+                      strong #{comentario.autorComentario.nombre} #{comentario.autorComentario.apellido}
+                    else
+                      strong Usuario
+                    p.mb-0= comentario.texto
+              else
+                p.text-muted Todavía no hay comentarios para esta imagen.
+
+              if usuario
+                if imagen.comentarios_abiertos
+                  form(method="POST", action=`/imagenes/${imagen.id_imagen}/comentarios`)
+                    .mb-2
+                      label.form-label(for=`comentario-${imagen.id_imagen}`) Agregar comentario
+                      textarea.form-control(
+                        id=`comentario-${imagen.id_imagen}`,
+                        name="texto",
+                        rows="2",
+                        required
+                      )
+                    button.btn.btn-outline-primary.btn-sm(type="submit") Comentar
+                else
+                  p.text-muted Los comentarios de esta imagen están cerrados.
+              else
+                p.text-muted
+                  | Para comentar tenés que 
+                  a(href="/login") iniciar sesión
+                  | .
+
               .mt-3.d-flex.gap-2
-                button.btn.btn-outline-primary.btn-sm(type="button", disabled) Comentar
                 button.btn.btn-outline-success.btn-sm(type="button", disabled) Valorar imagen
                 button.btn.btn-outline-warning.btn-sm(type="button", disabled) Me interesa

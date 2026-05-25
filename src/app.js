@@ -6,6 +6,7 @@ require("dotenv").config();
 const indexRoutes = require("./routes/index.routes");
 const authRoutes = require("./routes/auth.routes");
 const publicacionesRoutes = require("./routes/publicaciones.routes");
+const imagenesRoutes = require("./routes/imagenes.routes");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -40,6 +41,7 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/", indexRoutes);
 app.use("/", authRoutes);
 app.use("/publicaciones", publicacionesRoutes);
+app.use("/imagenes", imagenesRoutes);
 
 // Ruta no encontrada
 app.use((req, res) => {

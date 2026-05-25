@@ -1,4 +1,4 @@
-const { Publicacion, Imagen, Usuario, Etiqueta } = require("../models");
+const { Publicacion, Imagen, Usuario, Etiqueta, Comentario } = require("../models");
 
 async function verDetallePublicacion(req, res) {
   try {
@@ -27,6 +27,23 @@ async function verDetallePublicacion(req, res) {
             "marca_agua",
             "texto_marca_agua",
             "comentarios_abiertos",
+          ],
+          include: [
+            {
+              model: Comentario,
+              as: "comentarios",
+              where: {
+                estado: "activo",
+              },
+              required: false,
+              include: [
+                {
+                  model: Usuario,
+                  as: "autorComentario",
+                  attributes: ["id_usuario", "nombre", "apellido"],
+                },
+              ],
+            },
           ],
         },
         {
