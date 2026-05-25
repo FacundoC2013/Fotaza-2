@@ -1,6 +1,12 @@
 extends ../layout
 
 block contenido
+  if error
+    .alert.alert-danger= error
+
+  if exito
+    .alert.alert-success= exito
+
   a.btn.btn-secondary.mb-3(href="/") Volver a la home
 
   .card.mb-4
@@ -70,6 +76,17 @@ block contenido
                 else
                   |  cerrados
 
+              p.mb-1
+                strong Valoración:
+                if imagen.promedioValoraciones
+                  |  #{imagen.promedioValoraciones} / 5
+                else
+                  |  Sin valoraciones todavía
+
+              p.mb-1
+                strong Cantidad de votos:
+                |  #{imagen.cantidadValoraciones}
+
               hr
 
               h6 Comentarios
@@ -98,13 +115,43 @@ block contenido
                       )
                     button.btn.btn-outline-primary.btn-sm(type="submit") Comentar
                 else
-                  p.text-muted Los comentarios de esta imagen están cerrados.
+                  p.text-muted Los comentarios de esta imagen estan cerrados.
               else
                 p.text-muted
-                  | Para comentar tenés que 
-                  a(href="/login") iniciar sesión
+                  | Para comentar tenes que 
+                  a(href="/login") iniciar sesion
                   | .
 
-              .mt-3.d-flex.gap-2
-                button.btn.btn-outline-success.btn-sm(type="button", disabled) Valorar imagen
+              hr
+
+              h6 Valorar imagen
+
+              if usuario
+                if publicacion.esAutor
+                  p.text-muted No podes valorar una imagen de tu propia publicacion.
+                else if imagen.yaValoro
+                  p.text-muted Ya valoraste esta imagen.
+                else
+                  form(method="POST", action=`/imagenes/${imagen.id_imagen}/valoraciones`)
+                    .mb-2
+                      label.form-label(for=`puntaje-${imagen.id_imagen}`) Puntaje
+                      select.form-select(
+                        id=`puntaje-${imagen.id_imagen}`,
+                        name="puntaje",
+                        required
+                      )
+                        option(value="") Seleccioná un puntaje
+                        option(value="1") 1 - Muy mala
+                        option(value="2") 2 - Mala
+                        option(value="3") 3 - Regular
+                        option(value="4") 4 - Muy buena
+                        option(value="5") 5 - Excelente
+                    button.btn.btn-outline-success.btn-sm(type="submit") Valorar imagen
+              else
+                p.text-muted
+                  | Para valorar tenes que 
+                  a(href="/login") iniciar sesion
+                  | .
+
+              .mt-3
                 button.btn.btn-outline-warning.btn-sm(type="button", disabled) Me interesa

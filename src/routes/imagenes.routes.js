@@ -6,4 +6,6 @@ const { requireLogin } = require("../middlewares/authMiddleware");
 
 router.post("/:id/comentarios", requireLogin, imagenController.comentarImagen);
 
+router.post("/:id/valoraciones", requireLogin, imagenController.valorarImagen);
+
 module.exports = router;
