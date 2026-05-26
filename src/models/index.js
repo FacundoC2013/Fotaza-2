@@ -8,7 +8,7 @@ const Etiqueta = require("./Etiqueta");
 const PublicacionEtiqueta = require("./PublicacionEtiqueta");
 const Comentario = require("./Comentario");
 const Valoracion = require("./Valoracion");
-
+const Seguidor = require("./Seguidor");
 // Rol - Usuario
 Rol.hasMany(Usuario, {
   foreignKey: "id_rol",
@@ -100,6 +100,31 @@ Valoracion.belongsTo(Usuario, {
   foreignKey: "id_usuario",
   as: "autorValoracion",
 });
+// Usuario - Usuario: seguimiento
+Usuario.belongsToMany(Usuario, {
+  through: Seguidor,
+  as: "seguidos",
+  foreignKey: "id_seguidor",
+  otherKey: "id_seguido",
+});
+
+Usuario.belongsToMany(Usuario, {
+  through: Seguidor,
+  as: "seguidores",
+  foreignKey: "id_seguido",
+  otherKey: "id_seguidor",
+});
+
+// Relaciones directas de la tabla intermedia
+Seguidor.belongsTo(Usuario, {
+  foreignKey: "id_seguidor",
+  as: "usuarioSeguidor",
+});
+
+Seguidor.belongsTo(Usuario, {
+  foreignKey: "id_seguido",
+  as: "usuarioSeguido",
+});
 
 module.exports = {
   sequelize,
@@ -111,4 +136,5 @@ module.exports = {
   PublicacionEtiqueta,
   Comentario,
   Valoracion,
+  Seguidor,
 };
