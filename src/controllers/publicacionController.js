@@ -5,6 +5,8 @@ const {
   Etiqueta,
   Comentario,
   Valoracion,
+  Seguidor,
+
 } = require("../models");
 
 async function verDetallePublicacion(req, res) {
@@ -77,9 +79,24 @@ async function verDetallePublicacion(req, res) {
 
     const publicacion = publicacionDB.get({ plain: true });
 
-    publicacion.esAutor =
+ publicacion.esAutor = Boolean(
       idUsuarioActual &&
-      Number(publicacion.autor.id_usuario) === Number(idUsuarioActual);
+      publicacion.autor &&
+      Number(publicacion.autor.id_usuario) === Number(idUsuarioActual)
+    );
+
+    publicacion.sigueAutor = false;
+
+    if (idUsuarioActual && !publicacion.esAutor && publicacion.autor) {
+      const seguimiento = await Seguidor.findOne({
+        where: {
+          id_seguidor: Number(idUsuarioActual),
+          id_seguido: Number(publicacion.autor.id_usuario),
+        },
+      });
+
+      publicacion.sigueAutor = Boolean(seguimiento);
+    }
 
     publicacion.imagenes = publicacion.imagenes.map((imagen) => {
       const cantidadValoraciones = imagen.valoraciones.length;

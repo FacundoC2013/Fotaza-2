@@ -9,7 +9,7 @@ block contenido
 
   a.btn.btn-secondary.mb-3(href="/") Volver a la home
 
-  .card.mb-4
+    .card.mb-4
     .card-body
       h1.card-title= publicacion.titulo
 
@@ -22,6 +22,17 @@ block contenido
         p.mb-1
           strong Autor:
           |  #{publicacion.autor.nombre} #{publicacion.autor.apellido}
+
+        if usuario && !publicacion.esAutor
+          .mt-3
+            if publicacion.sigueAutor
+              form(method="POST", action=`/usuarios/${publicacion.autor.id_usuario}/dejar-de-seguir`)
+                input(type="hidden", name="volverA", value=`/publicaciones/${publicacion.id_publicacion}`)
+                button.btn.btn-outline-danger.btn-sm(type="submit") Dejar de seguir
+            else
+              form(method="POST", action=`/usuarios/${publicacion.autor.id_usuario}/seguir`)
+                input(type="hidden", name="volverA", value=`/publicaciones/${publicacion.id_publicacion}`)
+                button.btn.btn-outline-primary.btn-sm(type="submit") Seguir
 
       if publicacion.etiquetas && publicacion.etiquetas.length > 0
         p.mt-3.mb-2

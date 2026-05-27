@@ -7,7 +7,7 @@ const indexRoutes = require("./routes/index.routes");
 const authRoutes = require("./routes/auth.routes");
 const publicacionesRoutes = require("./routes/publicaciones.routes");
 const imagenesRoutes = require("./routes/imagenes.routes");
-
+const usuariosRoutes = require("./routes/usuarios.routes");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -42,7 +42,7 @@ app.use("/", indexRoutes);
 app.use("/", authRoutes);
 app.use("/publicaciones", publicacionesRoutes);
 app.use("/imagenes", imagenesRoutes);
-
+app.use("/usuarios", usuariosRoutes);
 // Ruta no encontrada
 app.use((req, res) => {
   res.status(404).send("Página no encontrada");
