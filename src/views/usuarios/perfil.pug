@@ -1,0 +1,69 @@
+extends ../layout
+
+block contenido
+  if error
+    .alert.alert-danger= error
+
+  if exito
+    .alert.alert-success= exito
+
+  a.btn.btn-secondary.mb-3(href="/") Volver a la home
+
+  .card.mb-4
+    .card-body
+      h1.card-title #{perfil.nombre} #{perfil.apellido}
+
+      if perfil.biografia
+        p.card-text= perfil.biografia
+      else
+        p.text-muted Este usuario no tiene biografía.
+
+      .d-flex.gap-4.mt-3.mb-3
+        p.mb-0
+          strong Seguidores:
+          |  #{cantidadSeguidores}
+        p.mb-0
+          strong Seguidos:
+          |  #{cantidadSeguidos}
+
+      if usuario && !esPerfilPropio
+        if siguePerfil
+          form(method="POST", action=`/usuarios/${perfil.id_usuario}/dejar-de-seguir`)
+            input(type="hidden", name="volverA", value=`/usuarios/${perfil.id_usuario}`)
+            button.btn.btn-outline-danger.btn-sm(type="submit") Dejar de seguir
+        else
+          form(method="POST", action=`/usuarios/${perfil.id_usuario}/seguir`)
+            input(type="hidden", name="volverA", value=`/usuarios/${perfil.id_usuario}`)
+            button.btn.btn-outline-primary.btn-sm(type="submit") Seguir
+
+      if esPerfilPropio
+        p.text-muted.mt-3 Este es tu perfil.
+
+  h2 Publicaciones de #{perfil.nombre}
+
+  if !perfil.publicaciones || perfil.publicaciones.length === 0
+    .alert.alert-info
+      | Este usuario todavía no tiene publicaciones activas.
+  else
+    .row
+      each publicacion in perfil.publicaciones
+        .col-md-4.mb-4
+          .card.h-100
+            .card-body
+              h5.card-title= publicacion.titulo
+
+              if publicacion.descripcion
+                p.card-text= publicacion.descripcion
+              else
+                p.text-muted Sin descripción.
+
+              if publicacion.imagenes && publicacion.imagenes.length > 0
+                p.mb-1
+                  strong Imagen principal:
+                  |  #{publicacion.imagenes[0].titulo || "Sin título"}
+                p.mb-1
+                  strong Licencia:
+                  |  #{publicacion.imagenes[0].licencia}
+
+              .mt-3
+                a.btn.btn-primary.btn-sm(href=`/publicaciones/${publicacion.id_publicacion}`) Ver detalle

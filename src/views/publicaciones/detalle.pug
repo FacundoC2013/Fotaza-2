@@ -9,7 +9,7 @@ block contenido
 
   a.btn.btn-secondary.mb-3(href="/") Volver a la home
 
-    .card.mb-4
+  .card.mb-4
     .card-body
       h1.card-title= publicacion.titulo
 
@@ -21,7 +21,8 @@ block contenido
       if publicacion.autor
         p.mb-1
           strong Autor:
-          |  #{publicacion.autor.nombre} #{publicacion.autor.apellido}
+          |  
+          a(href=`/usuarios/${publicacion.autor.id_usuario}`) #{publicacion.autor.nombre} #{publicacion.autor.apellido}
 
         if usuario && !publicacion.esAutor
           .mt-3

@@ -1,4 +1,4 @@
-const { Usuario, Seguidor } = require("../models");
+const { Usuario, Seguidor, Publicacion, Imagen } = require("../models");
 
 function obtenerRutaRetorno(req) {
   const volverA = req.body.volverA;
@@ -19,7 +19,110 @@ function agregarMensajeARuta(ruta, tipo, mensaje) {
 
   return `${ruta}${separador}${tipo}=${encodeURIComponent(mensaje)}`;
 }
+async function verPerfil(req, res) {
+  try {
+    const idPerfil = Number(req.params.id);
 
+    const idUsuarioActual = req.session?.usuario?.id_usuario
+      ? Number(req.session.usuario.id_usuario)
+      : null;
+
+    if (!Number.isInteger(idPerfil) || idPerfil <= 0) {
+      return res.status(400).send("ID de usuario inválido");
+    }
+
+    const usuarioDB = await Usuario.findByPk(idPerfil, {
+      attributes: [
+        "id_usuario",
+        "nombre",
+        "apellido",
+        "biografia",
+        "fecha_registro",
+      ],
+      include: [
+        {
+          model: Publicacion,
+          as: "publicaciones",
+          where: {
+            estado: "activa",
+          },
+          required: false,
+          attributes: [
+            "id_publicacion",
+            "titulo",
+            "descripcion",
+            "fecha_creacion",
+          ],
+          include: [
+            {
+              model: Imagen,
+              as: "imagenes",
+              attributes: [
+                "id_imagen",
+                "titulo",
+                "ruta_archivo",
+                "licencia",
+              ],
+              required: false,
+            },
+          ],
+        },
+      ],
+    });
+
+    if (!usuarioDB) {
+      return res.status(404).send("Usuario no encontrado");
+    }
+
+    const perfil = usuarioDB.get({ plain: true });
+
+    perfil.publicaciones.sort(
+      (a, b) => new Date(b.fecha_creacion) - new Date(a.fecha_creacion)
+    );
+
+    const cantidadSeguidores = await Seguidor.count({
+      where: {
+        id_seguido: idPerfil,
+      },
+    });
+
+    const cantidadSeguidos = await Seguidor.count({
+      where: {
+        id_seguidor: idPerfil,
+      },
+    });
+
+    const esPerfilPropio =
+      idUsuarioActual !== null && idUsuarioActual === idPerfil;
+
+    let siguePerfil = false;
+
+    if (idUsuarioActual && !esPerfilPropio) {
+      const seguimiento = await Seguidor.findOne({
+        where: {
+          id_seguidor: idUsuarioActual,
+          id_seguido: idPerfil,
+        },
+      });
+
+      siguePerfil = Boolean(seguimiento);
+    }
+
+    res.render("usuarios/perfil", {
+      titulo: `${perfil.nombre} ${perfil.apellido}`,
+      perfil,
+      cantidadSeguidores,
+      cantidadSeguidos,
+      esPerfilPropio,
+      siguePerfil,
+      error: req.query.error || null,
+      exito: req.query.exito || null,
+    });
+  } catch (error) {
+    console.error("Error al cargar el perfil:", error);
+    res.status(500).send("Error al cargar el perfil del usuario");
+  }
+}
 async function seguirUsuario(req, res) {
   try {
     const idSeguidor = Number(req.session.usuario.id_usuario);
@@ -129,6 +232,7 @@ async function dejarDeSeguirUsuario(req, res) {
   }
 }
 module.exports = {
+  verPerfil,
   seguirUsuario,
   dejarDeSeguirUsuario,
 };

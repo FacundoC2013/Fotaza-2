@@ -3,6 +3,7 @@ const router = express.Router();
 
 const usuarioController = require("../controllers/usuarioController");
 const { requireLogin } = require("../middlewares/authMiddleware");
+router.get("/:id", usuarioController.verPerfil);
 
 router.post("/:id/seguir", requireLogin, usuarioController.seguirUsuario);
 
