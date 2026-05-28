@@ -13,6 +13,7 @@ html(lang="es")
 
         .ms-auto.d-flex.align-items-center.gap-2
           if usuario
+            a.btn.btn-outline-light.btn-sm(href="/publicaciones/siguiendo") Siguiendo
             span.text-white Hola, #{usuario.nombre}
             form.d-inline(method="POST", action="/logout")
               button.btn.btn-outline-light.btn-sm(type="submit") Cerrar sesión

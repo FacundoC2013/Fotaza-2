@@ -1,3 +1,4 @@
+const { Op } = require("sequelize");
 const {
   Publicacion,
   Imagen,
@@ -79,7 +80,7 @@ async function verDetallePublicacion(req, res) {
 
     const publicacion = publicacionDB.get({ plain: true });
 
- publicacion.esAutor = Boolean(
+    publicacion.esAutor = Boolean(
       idUsuarioActual &&
       publicacion.autor &&
       Number(publicacion.autor.id_usuario) === Number(idUsuarioActual)
@@ -137,7 +138,75 @@ async function verDetallePublicacion(req, res) {
     res.status(500).send("Error al cargar el detalle de la publicacion");
   }
 }
+async function verPublicacionesSeguidos(req, res) {
+  try {
+    const idUsuarioActual = Number(req.session.usuario.id_usuario);
+
+    const seguimientos = await Seguidor.findAll({
+      where: {
+        id_seguidor: idUsuarioActual,
+      },
+      attributes: ["id_seguido"],
+    });
+
+    const idsSeguidos = seguimientos.map(
+      (seguimiento) => seguimiento.id_seguido
+    );
+
+    if (idsSeguidos.length === 0) {
+      return res.render("publicaciones/siguiendo", {
+        titulo: "Publicaciones de usuarios seguidos",
+        publicaciones: [],
+      });
+    }
+
+    const publicacionesDB = await Publicacion.findAll({
+      where: {
+        estado: "activa",
+        id_usuario: {
+          [Op.in]: idsSeguidos,
+        },
+      },
+      include: [
+        {
+          model: Usuario,
+          as: "autor",
+          attributes: ["id_usuario", "nombre", "apellido"],
+        },
+        {
+          model: Imagen,
+          as: "imagenes",
+          attributes: ["id_imagen", "titulo", "ruta_archivo", "licencia"],
+          required: false,
+        },
+        {
+          model: Etiqueta,
+          as: "etiquetas",
+          attributes: ["id_etiqueta", "nombre"],
+          through: {
+            attributes: [],
+          },
+          required: false,
+        },
+      ],
+      order: [["fecha_creacion", "DESC"]],
+    });
+
+    const publicaciones = publicacionesDB.map((publicacion) =>
+      publicacion.get({ plain: true })
+    );
+
+    res.render("publicaciones/siguiendo", {
+      titulo: "Publicaciones de usuarios seguidos",
+      publicaciones,
+    });
+  } catch (error) {
+    console.error("Error al cargar publicaciones de usuarios seguidos:", error);
+    res.status(500).send("Error al cargar publicaciones de usuarios seguidos");
+  }
+}
 
 module.exports = {
   verDetallePublicacion,
+  verPublicacionesSeguidos,
 };

@@ -1,0 +1,49 @@
+extends ../layout
+
+block contenido
+  a.btn.btn-secondary.mb-3(href="/") Volver a la home
+
+  h1.mb-3 Publicaciones de usuarios que seguís
+
+  if !publicaciones || publicaciones.length === 0
+    .alert.alert-info
+      | Todavía no seguís usuarios con publicaciones activas.
+  else
+    .row
+      each publicacion in publicaciones
+        .col-md-4.mb-4
+          .card.h-100
+            .card-body
+              h5.card-title= publicacion.titulo
+
+              if publicacion.autor
+                p.mb-2
+                  strong Autor:
+                  |  
+                  a(href=`/usuarios/${publicacion.autor.id_usuario}`) #{publicacion.autor.nombre} #{publicacion.autor.apellido}
+
+              if publicacion.descripcion
+                p.card-text= publicacion.descripcion
+              else
+                p.text-muted Sin descripción.
+
+              if publicacion.imagenes && publicacion.imagenes.length > 0
+                p.mb-1
+                  strong Imagen principal:
+                  |  #{publicacion.imagenes[0].titulo || "Sin título"}
+
+                p.mb-1
+                  strong Licencia:
+                  |  #{publicacion.imagenes[0].licencia}
+              else
+                p.text-muted Sin imágenes cargadas.
+
+              if publicacion.etiquetas && publicacion.etiquetas.length > 0
+                p.mt-2.mb-2
+                  strong Etiquetas:
+                .d-flex.flex-wrap.gap-2
+                  each etiqueta in publicacion.etiquetas
+                    span.badge.bg-secondary= etiqueta.nombre
+
+              .mt-3
+                a.btn.btn-primary.btn-sm(href=`/publicaciones/${publicacion.id_publicacion}`) Ver detalle
