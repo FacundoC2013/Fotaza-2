@@ -1,0 +1,128 @@
+extends ../layout
+
+block contenido
+  a.btn.btn-secondary.mb-3(href="/") Volver a la home
+
+  h1.mb-4 Nueva publicación
+
+  if error
+    .alert.alert-danger= error
+
+  form(method="POST", action="/publicaciones", enctype="multipart/form-data")
+    .card.mb-4
+      .card-body
+        h4 Datos de la publicación
+
+        .mb-3
+          label.form-label(for="titulo") Título de la publicación
+          input.form-control(
+            type="text",
+            id="titulo",
+            name="titulo",
+            value=datos.titulo || "",
+            required
+          )
+
+        .mb-3
+          label.form-label(for="descripcion") Descripción de la publicación
+          textarea.form-control(
+            id="descripcion",
+            name="descripcion",
+            rows="3"
+          )= datos.descripcion || ""
+
+    .card.mb-4
+      .card-body
+        h4 Datos de la imagen
+
+        .mb-3
+          label.form-label(for="tituloImagen") Título de la imagen
+          input.form-control(
+            type="text",
+            id="tituloImagen",
+            name="tituloImagen",
+            value=datos.tituloImagen || "",
+            required
+          )
+
+        .mb-3
+          label.form-label(for="descripcionImagen") Descripción de la imagen
+          textarea.form-control(
+            id="descripcionImagen",
+            name="descripcionImagen",
+            rows="3"
+          )= datos.descripcionImagen || ""
+
+        .mb-3
+          label.form-label(for="licencia") Licencia
+          select.form-select(id="licencia", name="licencia", required)
+            option(value="") Seleccioná una licencia
+            option(value="sin_copyright") Sin copyright
+            option(value="con_copyright") Con copyright
+            option(value="uso_libre") Uso libre
+            option(value="venta") Disponible para venta
+
+        .mb-3
+          label.form-label(for="imagen") Archivo de imagen
+          input.form-control(
+            type="file",
+            id="imagen",
+            name="imagen",
+            accept="image/jpeg,image/png,image/webp",
+            required
+          )
+          small.text-muted Formatos permitidos: JPG, PNG o WEBP. Tamaño máximo: 2 MB.
+
+        .mb-3
+          img#previewImagen.img-fluid.rounded.d-none(src="", alt="Vista previa de la imagen")
+
+        .form-check.mb-3
+          input.form-check-input(
+            type="checkbox",
+            id="comentariosAbiertos",
+            name="comentariosAbiertos",
+            checked
+          )
+          label.form-check-label(for="comentariosAbiertos") Permitir comentarios en esta imagen
+
+        .form-check.mb-3
+          input.form-check-input(
+            type="checkbox",
+            id="marcaAgua",
+            name="marcaAgua"
+          )
+          label.form-check-label(for="marcaAgua") Agregar marca de agua
+
+        .mb-3
+          label.form-label(for="textoMarcaAgua") Texto de marca de agua
+          input.form-control(
+            type="text",
+            id="textoMarcaAgua",
+            name="textoMarcaAgua",
+            value=datos.textoMarcaAgua || ""
+          )
+
+    button.btn.btn-primary(type="submit") Crear publicación
+
+  script.
+    const inputImagen = document.getElementById("imagen");
+    const previewImagen = document.getElementById("previewImagen");
+
+    inputImagen.addEventListener("change", function () {
+      const archivo = this.files[0];
+
+      if (!archivo) {
+        previewImagen.classList.add("d-none");
+        previewImagen.src = "";
+        return;
+      }
+
+      const lector = new FileReader();
+
+      lector.onload = function (evento) {
+        previewImagen.src = evento.target.result;
+        previewImagen.classList.remove("d-none");
+      };
+
+      lector.readAsDataURL(archivo);
+    });

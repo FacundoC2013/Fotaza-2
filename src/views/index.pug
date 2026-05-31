@@ -18,6 +18,8 @@ block contenido
               h5.card-title= publicacion.titulo
 
               if publicacion.imagenes && publicacion.imagenes.length > 0
+                img.img-fluid.rounded.mb-3(src=publicacion.imagenes[0].ruta_archivo, alt=publicacion.imagenes[0].titulo || "Imagen de la publicación")
+
                 h6.card-subtitle.mb-2.text-muted= publicacion.imagenes[0].titulo
                 p.mb-1
                   strong Licencia:

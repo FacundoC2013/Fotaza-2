@@ -205,8 +205,102 @@ async function verPublicacionesSeguidos(req, res) {
     res.status(500).send("Error al cargar publicaciones de usuarios seguidos");
   }
 }
+function mostrarFormularioNuevaPublicacion(req, res) {
+  res.render("publicaciones/nueva", {
+    titulo: "Nueva publicación",
+    error: null,
+    datos: {},
+  });
+}
+async function guardarNuevaPublicacion(req, res) {
+  try {
+    const idUsuario = Number(req.session.usuario.id_usuario);
+
+    const {
+      titulo,
+      descripcion,
+      tituloImagen,
+      descripcionImagen,
+      licencia,
+      textoMarcaAgua,
+    } = req.body;
+
+    const datos = {
+      titulo,
+      descripcion,
+      tituloImagen,
+      descripcionImagen,
+      licencia,
+      textoMarcaAgua,
+    };
+
+    if (!titulo || !titulo.trim()) {
+      return res.render("publicaciones/nueva", {
+        titulo: "Nueva publicación",
+        error: "El título de la publicación es obligatorio.",
+        datos,
+      });
+    }
+
+    if (!tituloImagen || !tituloImagen.trim()) {
+      return res.render("publicaciones/nueva", {
+        titulo: "Nueva publicación",
+        error: "El título de la imagen es obligatorio.",
+        datos,
+      });
+    }
+
+    if (!licencia) {
+      return res.render("publicaciones/nueva", {
+        titulo: "Nueva publicación",
+        error: "Debe seleccionar una licencia.",
+        datos,
+      });
+    }
+
+    if (!req.file) {
+      return res.render("publicaciones/nueva", {
+        titulo: "Nueva publicación",
+        error: "Debe seleccionar una imagen.",
+        datos,
+      });
+    }
+
+    const publicacion = await Publicacion.create({
+      id_usuario: idUsuario,
+      titulo: titulo.trim(),
+      descripcion: descripcion ? descripcion.trim() : null,
+      estado: "activa",
+      permite_editar: true,
+      fecha_creacion: new Date(),
+      fecha_actualizacion: new Date(),
+    });
+
+    const rutaArchivo = `/uploads/imagenes/${req.file.filename}`;
+
+    await Imagen.create({
+      id_publicacion: publicacion.id_publicacion,
+      titulo: tituloImagen.trim(),
+      descripcion: descripcionImagen ? descripcionImagen.trim() : null,
+      ruta_archivo: rutaArchivo,
+      licencia,
+      marca_agua: req.body.marcaAgua === "on",
+      texto_marca_agua: textoMarcaAgua ? textoMarcaAgua.trim() : null,
+      comentarios_abiertos: req.body.comentariosAbiertos === "on",
+      fecha_subida: new Date(),
+    });
+
+    res.redirect(`/publicaciones/${publicacion.id_publicacion}`);
+  } catch (error) {
+    console.error("Error al guardar nueva publicación:", error);
+
+    res.status(500).send("Error al guardar la publicación");
+  }
+}
 
 module.exports = {
   verDetallePublicacion,
   verPublicacionesSeguidos,
+  mostrarFormularioNuevaPublicacion,
+  guardarNuevaPublicacion,
 };

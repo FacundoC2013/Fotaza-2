@@ -58,12 +58,16 @@ block contenido
                 p.text-muted Sin descripción.
 
               if publicacion.imagenes && publicacion.imagenes.length > 0
+                img.img-fluid.rounded.mb-3(src=publicacion.imagenes[0].ruta_archivo, alt=publicacion.imagenes[0].titulo || "Imagen de la publicación")
+
                 p.mb-1
                   strong Imagen principal:
-                  |  #{publicacion.imagenes[0].titulo || "Sin título"}
+                  | #{publicacion.imagenes[0].titulo || "Sin título"}
                 p.mb-1
                   strong Licencia:
-                  |  #{publicacion.imagenes[0].licencia}
+                  | #{publicacion.imagenes[0].licencia}
+              else
+                p.text-muted Sin imágenes cargadas.
 
               .mt-3
                 a.btn.btn-primary.btn-sm(href=`/publicaciones/${publicacion.id_publicacion}`) Ver detalle

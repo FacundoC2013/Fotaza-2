@@ -57,6 +57,9 @@ block contenido
             .card-body
               h5.card-title= imagen.titulo || "Imagen sin título"
 
+              if imagen.ruta_archivo
+                img.img-fluid.rounded.mb-3(src=imagen.ruta_archivo, alt=imagen.titulo || "Imagen de la publicación")
+
               if imagen.descripcion
                 p.card-text= imagen.descripcion
 
