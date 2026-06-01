@@ -1,16 +1,43 @@
-extends layout
+extends ../layout
 
 block contenido
-  h1.mb-3 Fotaza 2
-  p.text-muted Comunidad para publicar, compartir y descubrir fotografías.
-  .mb-4
-    a.btn.btn-outline-primary.btn-sm(href="/publicaciones/buscar") Ir a búsqueda avanzada
-  h2.mt-4 Publicaciones recientes
+  a.btn.btn-secondary.mb-3(href="/") Volver a la home
 
-  if publicaciones.length === 0
-    .alert.alert-info
-      | No hay publicaciones cargadas todavía.
-  else
+  h1.mb-3 Buscar publicaciones
+
+  form(method="GET", action="/publicaciones/buscar").mb-4
+    .row.g-2
+      .col-md-5
+        input.form-control(
+          type="text",
+          name="q",
+          placeholder="Buscar por título, autor, imagen o etiqueta..."
+          value=busqueda || ""
+        )
+
+      .col-md-3
+        select.form-select(name="licencia")
+          option(value="") Todas las licencias
+          option(value="sin_copyright", selected=licencia === "sin_copyright") Sin copyright
+          option(value="con_copyright", selected=licencia === "con_copyright") Con copyright
+          option(value="uso_libre", selected=licencia === "uso_libre") Uso libre
+          option(value="venta", selected=licencia === "venta") Disponible para venta
+
+      .col-md-2
+        select.form-select(name="orden")
+          option(value="recientes", selected=orden === "recientes") Recientes
+          option(value="antiguas", selected=orden === "antiguas") Antiguas
+          option(value="titulo", selected=orden === "titulo") Título
+
+      .col-md-2
+        button.btn.btn-primary.w-100(type="submit") Buscar
+
+  if mensaje
+    .alert.alert-info= mensaje
+
+  if publicaciones && publicaciones.length > 0
+    h2.mb-3 Resultados para "#{busqueda || 'filtros seleccionados'}"
+
     .row
       each publicacion in publicaciones
         .col-md-4.mb-4
@@ -22,6 +49,7 @@ block contenido
                 img.img-fluid.rounded.mb-3(src=publicacion.imagenes[0].ruta_archivo, alt=publicacion.imagenes[0].titulo || "Imagen de la publicación")
 
                 h6.card-subtitle.mb-2.text-muted= publicacion.imagenes[0].titulo
+
                 p.mb-1
                   strong Licencia:
                   |  #{publicacion.imagenes[0].licencia}
@@ -33,7 +61,7 @@ block contenido
               else
                 p.text-muted Sin descripción.
 
-                            if publicacion.autor
+              if publicacion.autor
                 p.mb-1
                   strong Autor:
                   |  
@@ -42,11 +70,9 @@ block contenido
               if publicacion.etiquetas && publicacion.etiquetas.length > 0
                 p.mb-1
                   strong Etiquetas:
-                  | 
+                .d-flex.flex-wrap.gap-2
                   each etiqueta in publicacion.etiquetas
                     a.badge.bg-secondary.text-decoration-none.me-1(href=`/publicaciones/buscar?q=${etiqueta.nombre}`)= etiqueta.nombre
-
-              small.text-muted= publicacion.fecha_creacion
 
               .mt-3
                 a.btn.btn-primary.btn-sm(href=`/publicaciones/${publicacion.id_publicacion}`) Ver detalle

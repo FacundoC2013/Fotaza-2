@@ -40,7 +40,7 @@ block contenido
           strong Etiquetas:
         .d-flex.flex-wrap.gap-2
           each etiqueta in publicacion.etiquetas
-            span.badge.bg-secondary= etiqueta.nombre
+            a.badge.bg-secondary.text-decoration-none.me-1(href=`/publicaciones/buscar?q=${etiqueta.nombre}`)= etiqueta.nombre
       else
         p.text-muted Esta publicación no tiene etiquetas.
 

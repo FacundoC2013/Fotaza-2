@@ -20,6 +20,7 @@ router.post(
   upload.single("imagen"),
   publicacionController.guardarNuevaPublicacion
 );
+router.get("/buscar", publicacionController.buscarPublicaciones);
 
 router.get("/:id", publicacionController.verDetallePublicacion);
 

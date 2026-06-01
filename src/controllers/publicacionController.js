@@ -297,10 +297,135 @@ async function guardarNuevaPublicacion(req, res) {
     res.status(500).send("Error al guardar la publicación");
   }
 }
+async function buscarPublicaciones(req, res) {
+  try {
+    const busqueda = req.query.q ? req.query.q.trim() : "";
+    const licencia = req.query.licencia ? req.query.licencia.trim() : "";
+    const orden = req.query.orden || "recientes";
 
+    if (!busqueda && !licencia) {
+      return res.render("publicaciones/buscar", {
+        titulo: "Buscar publicaciones",
+        busqueda,
+        licencia,
+        orden,
+        publicaciones: [],
+        mensaje: "Ingresá un texto o seleccioná una licencia para buscar publicaciones.",
+      });
+    }
+
+    const publicacionesDB = await Publicacion.findAll({
+      where: {
+        estado: "activa",
+      },
+      include: [
+        {
+          model: Usuario,
+          as: "autor",
+          attributes: ["id_usuario", "nombre", "apellido"],
+          required: false,
+        },
+        {
+          model: Imagen,
+          as: "imagenes",
+          attributes: [
+            "id_imagen",
+            "titulo",
+            "descripcion",
+            "ruta_archivo",
+            "licencia",
+          ],
+          required: false,
+        },
+        {
+          model: Etiqueta,
+          as: "etiquetas",
+          attributes: ["id_etiqueta", "nombre"],
+          through: {
+            attributes: [],
+          },
+          required: false,
+        },
+      ],
+      order: [["fecha_creacion", "DESC"]],
+    });
+
+    const publicaciones = publicacionesDB
+      .map((publicacion) => publicacion.get({ plain: true }))
+      .filter((publicacion) => {
+        const textoBusqueda = busqueda.toLowerCase();
+
+        const coincideAutor =
+          publicacion.autor &&
+          `${publicacion.autor.nombre} ${publicacion.autor.apellido}`
+            .toLowerCase()
+            .includes(textoBusqueda);
+
+        const coincideImagen = publicacion.imagenes.some((imagen) => {
+          const tituloImagen = imagen.titulo || "";
+          const descripcionImagen = imagen.descripcion || "";
+
+          return (
+            tituloImagen.toLowerCase().includes(textoBusqueda) ||
+            descripcionImagen.toLowerCase().includes(textoBusqueda)
+          );
+        });
+
+        const coincideEtiqueta = publicacion.etiquetas.some((etiqueta) =>
+          etiqueta.nombre.toLowerCase().includes(textoBusqueda)
+        );
+
+        const coincidePublicacion =
+          publicacion.titulo.toLowerCase().includes(textoBusqueda) ||
+          (publicacion.descripcion &&
+            publicacion.descripcion.toLowerCase().includes(textoBusqueda));
+
+        const coincideTexto =
+          !busqueda ||
+          coincidePublicacion ||
+          coincideAutor ||
+          coincideImagen ||
+          coincideEtiqueta;
+
+        const coincideLicencia =
+          !licencia ||
+          publicacion.imagenes.some((imagen) => imagen.licencia === licencia);
+
+        return coincideTexto && coincideLicencia;
+      });
+
+    if (orden === "antiguas") {
+      publicaciones.sort(
+        (a, b) => new Date(a.fecha_creacion) - new Date(b.fecha_creacion)
+      );
+    } else if (orden === "titulo") {
+      publicaciones.sort((a, b) => a.titulo.localeCompare(b.titulo));
+    } else {
+      publicaciones.sort(
+        (a, b) => new Date(b.fecha_creacion) - new Date(a.fecha_creacion)
+      );
+    }
+
+    res.render("publicaciones/buscar", {
+      titulo: "Buscar publicaciones",
+      busqueda,
+      licencia,
+      orden,
+      publicaciones,
+      mensaje:
+        publicaciones.length === 0
+          ? "No se encontraron publicaciones para esa búsqueda."
+          : null,
+    });
+  } catch (error) {
+    console.error("Error al buscar publicaciones:", error);
+    res.status(500).send("Error al buscar publicaciones");
+  }
+}
 module.exports = {
   verDetallePublicacion,
   verPublicacionesSeguidos,
   mostrarFormularioNuevaPublicacion,
   guardarNuevaPublicacion,
+  buscarPublicaciones,
 };
