@@ -7,7 +7,7 @@ block contenido
 
   form(method="GET", action="/publicaciones/buscar").mb-4
     .row.g-2
-      .col-md-5
+      .col-md-4
         input.form-control(
           type="text",
           name="q",
@@ -23,20 +23,39 @@ block contenido
           option(value="uso_libre", selected=licencia === "uso_libre") Uso libre
           option(value="venta", selected=licencia === "venta") Disponible para venta
 
-      .col-md-2
+      .col-md-3
         select.form-select(name="orden")
-          option(value="recientes", selected=orden === "recientes") Recientes
-          option(value="antiguas", selected=orden === "antiguas") Antiguas
+          option(value="recientes", selected=orden === "recientes") Más recientes
+          option(value="antiguas", selected=orden === "antiguas") Más antiguas
           option(value="titulo", selected=orden === "titulo") Título
+          option(value="mejor_valoradas", selected=orden === "mejor_valoradas") Mejor valoradas
 
       .col-md-2
         button.btn.btn-primary.w-100(type="submit") Buscar
+
+    if etiqueta
+      input(type="hidden", name="etiqueta", value=etiqueta)
+
+  .mb-3
+    a.btn.btn-outline-secondary.btn-sm(href="/publicaciones/buscar") Limpiar filtros
+
+    if busqueda || licencia || etiqueta || (orden && orden !== "recientes")
+    .alert.alert-light.border
+      strong Filtros aplicados:
+      if busqueda
+        span.ms-2 Texto: "#{busqueda}"
+      if licencia
+        span.ms-2 Licencia: #{licencia}
+      if etiqueta
+        span.ms-2 Etiqueta: #{etiqueta}
+      if orden
+        span.ms-2 Orden: #{orden}
 
   if mensaje
     .alert.alert-info= mensaje
 
   if publicaciones && publicaciones.length > 0
-    h2.mb-3 Resultados para "#{busqueda || 'filtros seleccionados'}"
+    h2.mb-3 Resultados encontrados
 
     .row
       each publicacion in publicaciones
@@ -67,12 +86,23 @@ block contenido
                   |  
                   a(href=`/usuarios/${publicacion.autor.id_usuario}`) #{publicacion.autor.nombre} #{publicacion.autor.apellido}
 
+              p.mb-1
+                strong Valoración:
+                if publicacion.cantidadValoraciones > 0
+                  |  #{publicacion.promedioValoracion.toFixed(1)} / 5
+                else
+                  |  Sin valoraciones
+
+              p.mb-1
+                strong Votos:
+                |  #{publicacion.cantidadValoraciones}
+
               if publicacion.etiquetas && publicacion.etiquetas.length > 0
                 p.mb-1
                   strong Etiquetas:
                 .d-flex.flex-wrap.gap-2
-                  each etiqueta in publicacion.etiquetas
-                    a.badge.bg-secondary.text-decoration-none.me-1(href=`/publicaciones/buscar?q=${etiqueta.nombre}`)= etiqueta.nombre
+                  each etiquetaItem in publicacion.etiquetas
+                    a.badge.bg-secondary.text-decoration-none.me-1(href="/publicaciones/buscar?etiqueta=" + encodeURIComponent(etiquetaItem.nombre))= etiquetaItem.nombre
 
               .mt-3
                 a.btn.btn-primary.btn-sm(href=`/publicaciones/${publicacion.id_publicacion}`) Ver detalle

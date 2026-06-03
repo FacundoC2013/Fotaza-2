@@ -301,16 +301,21 @@ async function buscarPublicaciones(req, res) {
   try {
     const busqueda = req.query.q ? req.query.q.trim() : "";
     const licencia = req.query.licencia ? req.query.licencia.trim() : "";
+    const etiqueta = req.query.etiqueta ? req.query.etiqueta.trim() : "";
     const orden = req.query.orden || "recientes";
+    const hayConsulta = Object.keys(req.query).length > 0;
+    const hayOrdenEspecial = orden && orden !== "recientes";
 
-    if (!busqueda && !licencia) {
+    if (!hayConsulta) {
       return res.render("publicaciones/buscar", {
         titulo: "Buscar publicaciones",
         busqueda,
         licencia,
+        etiqueta,
         orden,
         publicaciones: [],
-        mensaje: "Ingresá un texto o seleccioná una licencia para buscar publicaciones.",
+        mensaje:
+          "Ingresá un texto, seleccioná una licencia o tocá una etiqueta para buscar publicaciones.",
       });
     }
 
@@ -336,6 +341,14 @@ async function buscarPublicaciones(req, res) {
             "licencia",
           ],
           required: false,
+          include: [
+            {
+              model: Valoracion,
+              as: "valoraciones",
+              attributes: ["puntaje"],
+              required: false,
+            },
+          ],
         },
         {
           model: Etiqueta,
@@ -351,9 +364,34 @@ async function buscarPublicaciones(req, res) {
     });
 
     const publicaciones = publicacionesDB
-      .map((publicacion) => publicacion.get({ plain: true }))
+      .map((publicacion) => {
+        const publicacionPlano = publicacion.get({ plain: true });
+
+        const valoraciones = publicacionPlano.imagenes.flatMap((imagen) =>
+          imagen.valoraciones ? imagen.valoraciones : []
+        );
+
+        const cantidadValoraciones = valoraciones.length;
+
+        const sumaValoraciones = valoraciones.reduce(
+          (total, valoracion) => total + Number(valoracion.puntaje),
+          0
+        );
+
+        const promedioValoracion =
+          cantidadValoraciones > 0
+            ? sumaValoraciones / cantidadValoraciones
+            : 0;
+
+        return {
+          ...publicacionPlano,
+          cantidadValoraciones,
+          promedioValoracion,
+        };
+      })
       .filter((publicacion) => {
         const textoBusqueda = busqueda.toLowerCase();
+        const textoEtiqueta = etiqueta.toLowerCase();
 
         const coincideAutor =
           publicacion.autor &&
@@ -371,9 +409,16 @@ async function buscarPublicaciones(req, res) {
           );
         });
 
-        const coincideEtiqueta = publicacion.etiquetas.some((etiqueta) =>
-          etiqueta.nombre.toLowerCase().includes(textoBusqueda)
+        const coincideEtiquetaTexto = publicacion.etiquetas.some((etiquetaItem) =>
+          etiquetaItem.nombre.toLowerCase().includes(textoBusqueda)
         );
+
+        const coincideEtiquetaFiltro =
+          !etiqueta ||
+          publicacion.etiquetas.some(
+            (etiquetaItem) =>
+              etiquetaItem.nombre.toLowerCase() === textoEtiqueta
+          );
 
         const coincidePublicacion =
           publicacion.titulo.toLowerCase().includes(textoBusqueda) ||
@@ -385,13 +430,13 @@ async function buscarPublicaciones(req, res) {
           coincidePublicacion ||
           coincideAutor ||
           coincideImagen ||
-          coincideEtiqueta;
+          coincideEtiquetaTexto;
 
         const coincideLicencia =
           !licencia ||
           publicacion.imagenes.some((imagen) => imagen.licencia === licencia);
 
-        return coincideTexto && coincideLicencia;
+        return coincideTexto && coincideLicencia && coincideEtiquetaFiltro;
       });
 
     if (orden === "antiguas") {
@@ -400,6 +445,14 @@ async function buscarPublicaciones(req, res) {
       );
     } else if (orden === "titulo") {
       publicaciones.sort((a, b) => a.titulo.localeCompare(b.titulo));
+    } else if (orden === "mejor_valoradas") {
+      publicaciones.sort((a, b) => {
+        if (b.promedioValoracion !== a.promedioValoracion) {
+          return b.promedioValoracion - a.promedioValoracion;
+        }
+
+        return b.cantidadValoraciones - a.cantidadValoraciones;
+      });
     } else {
       publicaciones.sort(
         (a, b) => new Date(b.fecha_creacion) - new Date(a.fecha_creacion)
@@ -410,6 +463,7 @@ async function buscarPublicaciones(req, res) {
       titulo: "Buscar publicaciones",
       busqueda,
       licencia,
+      etiqueta,
       orden,
       publicaciones,
       mensaje:
