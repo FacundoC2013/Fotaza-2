@@ -8,28 +8,28 @@ html(lang="es")
 
   body
     nav.navbar.navbar-expand-lg.navbar-dark.bg-dark
-  .container
-    a.navbar-brand.text-white(href="/") Fotaza 2
+      .container
+        a.navbar-brand.text-white(href="/") Fotaza 2
 
-    form.d-flex.ms-3(method="GET", action="/publicaciones/buscar")
-      input.form-control.form-control-sm.me-2(
-        type="text",
-        name="q",
-        placeholder="Buscar..."
-      )
-      button.btn.btn-outline-light.btn-sm(type="submit") Buscar
+        form.d-flex.ms-3(method="GET", action="/publicaciones/buscar")
+          input.form-control.form-control-sm.me-2(
+            type="text",
+            name="q",
+            placeholder="Buscar..."
+          )
+          button.btn.btn-outline-light.btn-sm(type="submit") Buscar
 
-    a.btn.btn-link.text-white.ms-2(href="/publicaciones/buscar") Búsqueda avanzada
+        a.btn.btn-link.text-white.ms-2(href="/publicaciones/buscar") Búsqueda avanzada
 
-    .ms-auto.d-flex.align-items-center.gap-2
-      if usuario
-        a.btn.btn-outline-light.btn-sm(href="/publicaciones/siguiendo") Siguiendo
-        a.btn.btn-outline-light.btn-sm(href="/publicaciones/nueva") Nueva publicación
-        span.text-white Hola, #{usuario.nombre}
-        form.d-inline(method="POST", action="/logout")
-          button.btn.btn-outline-light.btn-sm(type="submit") Cerrar sesión
-      else
-        a.btn.btn-outline-light.btn-sm(href="/login") Iniciar sesión
+        .ms-auto.d-flex.align-items-center.gap-2
+          if usuario
+            a.btn.btn-outline-light.btn-sm(href="/publicaciones/siguiendo") Siguiendo
+            a.btn.btn-outline-light.btn-sm(href="/publicaciones/nueva") Nueva publicación
+            span.text-white Hola, #{usuario.nombre}
+            form.d-inline(method="POST", action="/logout")
+              button.btn.btn-outline-light.btn-sm(type="submit") Cerrar sesión
+          else
+            a.btn.btn-outline-light.btn-sm(href="/login") Iniciar sesión
 
     main.container.mt-4
       block contenido
