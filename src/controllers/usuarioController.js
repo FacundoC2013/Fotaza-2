@@ -76,9 +76,22 @@ async function verPerfil(req, res) {
 
     const perfil = usuarioDB.get({ plain: true });
 
-    perfil.publicaciones.sort(
-      (a, b) => new Date(b.fecha_creacion) - new Date(a.fecha_creacion)
-    );
+    if (!req.session.usuario) {
+       perfil.publicaciones = perfil.publicaciones
+         .map((publicacion) => {
+            return {
+              ...publicacion,
+              imagenes: publicacion.imagenes.filter(
+                (imagen) => imagen.licencia === "sin_copyright"
+              ),
+            };
+          })
+          .filter((publicacion) => publicacion.imagenes.length > 0);
+      }
+
+      perfil.publicaciones.sort(
+        (a, b) => new Date(b.fecha_creacion) - new Date(a.fecha_creacion)
+      );
 
     const cantidadSeguidores = await Seguidor.count({
       where: {

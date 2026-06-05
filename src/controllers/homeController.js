@@ -30,10 +30,23 @@ async function mostrarHome(req, res) {
       limit: 10,
     });
 
-    const publicaciones = publicacionesDB.map((publicacion) =>
+        let publicaciones = publicacionesDB.map((publicacion) =>
       publicacion.get({ plain: true })
     );
-
+    
+    if (!req.session.usuario) {
+      publicaciones = publicaciones
+        .map((publicacion) => {
+          return {
+            ...publicacion,
+            imagenes: publicacion.imagenes.filter(
+              (imagen) => imagen.licencia === "sin_copyright"
+            ),
+          };
+        })
+        .filter((publicacion) => publicacion.imagenes.length > 0);
+    }
+    
     res.render("index", {
       titulo: "Fotaza 2",
       publicaciones,

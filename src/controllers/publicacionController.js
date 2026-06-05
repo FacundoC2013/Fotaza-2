@@ -80,6 +80,12 @@ async function verDetallePublicacion(req, res) {
 
     const publicacion = publicacionDB.get({ plain: true });
 
+    if (!req.session.usuario) {
+      publicacion.imagenes = publicacion.imagenes.filter(
+        (imagen) => imagen.licencia === "sin_copyright"
+      );
+    }
+
     publicacion.esAutor = Boolean(
       idUsuarioActual &&
       publicacion.autor &&
@@ -409,9 +415,15 @@ async function buscarPublicaciones(req, res) {
       order: [["fecha_creacion", "DESC"]],
     });
 
-    const publicaciones = publicacionesDB
+       const publicaciones = publicacionesDB
       .map((publicacion) => {
         const publicacionPlano = publicacion.get({ plain: true });
+
+        if (!req.session.usuario) {
+          publicacionPlano.imagenes = publicacionPlano.imagenes.filter(
+            (imagen) => imagen.licencia === "sin_copyright"
+          );
+        }
 
         const valoraciones = publicacionPlano.imagenes.flatMap((imagen) =>
           imagen.valoraciones ? imagen.valoraciones : []
@@ -435,7 +447,11 @@ async function buscarPublicaciones(req, res) {
           promedioValoracion,
         };
       })
-      .filter((publicacion) => {
+          .filter((publicacion) => {
+             if (publicacion.imagenes.length === 0) {
+              return false;
+             }
+
         const textoBusqueda = busqueda.toLowerCase();
         const textoEtiqueta = etiqueta.toLowerCase();
 
