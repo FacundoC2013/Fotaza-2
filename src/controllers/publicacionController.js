@@ -4,10 +4,10 @@ const {
   Imagen,
   Usuario,
   Etiqueta,
+  PublicacionEtiqueta,
   Comentario,
   Valoracion,
   Seguidor,
-
 } = require("../models");
 
 async function verDetallePublicacion(req, res) {
@@ -216,18 +216,20 @@ async function guardarNuevaPublicacion(req, res) {
   try {
     const idUsuario = Number(req.session.usuario.id_usuario);
 
-    const {
-      titulo,
-      descripcion,
-      tituloImagen,
-      descripcionImagen,
-      licencia,
-      textoMarcaAgua,
-    } = req.body;
+      const {
+    titulo,
+    descripcion,
+    etiquetas,
+    tituloImagen,
+    descripcionImagen,
+    licencia,
+    textoMarcaAgua,
+  } = req.body;
 
     const datos = {
       titulo,
       descripcion,
+      etiquetas,
       tituloImagen,
       descripcionImagen,
       licencia,
@@ -249,6 +251,29 @@ async function guardarNuevaPublicacion(req, res) {
         datos,
       });
     }
+      const nombresEtiquetas = etiquetas
+    ? etiquetas
+        .split(",")
+        .map((etiqueta) => etiqueta.trim().toLowerCase())
+        .filter((etiqueta) => etiqueta.length > 0)
+        .filter((etiqueta, index, array) => array.indexOf(etiqueta) === index)
+    : [];
+
+  if (nombresEtiquetas.length === 0) {
+    return res.render("publicaciones/nueva", {
+      titulo: "Nueva publicación",
+      error: "Debe ingresar al menos una etiqueta.",
+      datos,
+    });
+  }
+
+  if (nombresEtiquetas.some((etiqueta) => etiqueta.length > 50)) {
+    return res.render("publicaciones/nueva", {
+      titulo: "Nueva publicación",
+      error: "Cada etiqueta debe tener como máximo 50 caracteres.",
+      datos,
+    });
+  }
 
     if (!licencia) {
       return res.render("publicaciones/nueva", {
@@ -289,6 +314,27 @@ async function guardarNuevaPublicacion(req, res) {
       comentarios_abiertos: req.body.comentariosAbiertos === "on",
       fecha_subida: new Date(),
     });
+      for (const nombreEtiqueta of nombresEtiquetas) {
+    const [etiquetaDB] = await Etiqueta.findOrCreate({
+      where: {
+        nombre: nombreEtiqueta,
+      },
+      defaults: {
+        nombre: nombreEtiqueta,
+      },
+    });
+
+    await PublicacionEtiqueta.findOrCreate({
+      where: {
+        id_publicacion: publicacion.id_publicacion,
+        id_etiqueta: etiquetaDB.id_etiqueta,
+      },
+      defaults: {
+        id_publicacion: publicacion.id_publicacion,
+        id_etiqueta: etiquetaDB.id_etiqueta,
+      },
+    });
+  }
 
     res.redirect(`/publicaciones/${publicacion.id_publicacion}`);
   } catch (error) {

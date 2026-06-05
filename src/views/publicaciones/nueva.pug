@@ -30,6 +30,18 @@ block contenido
             name="descripcion",
             rows="3"
           )= datos.descripcion || ""
+          
+          .mb-3
+          label.form-label(for="etiquetas") Etiquetas
+          input.form-control(
+            type="text",
+            id="etiquetas",
+            name="etiquetas",
+            value=datos.etiquetas || "",
+            placeholder="Ej: paisajes, san_luis, naturaleza",
+            required
+          )
+          small.text-muted Separá las etiquetas con coma. Ejemplo: paisajes, san_luis, naturaleza.
 
     .card.mb-4
       .card-body
@@ -59,8 +71,6 @@ block contenido
             option(value="") Seleccioná una licencia
             option(value="sin_copyright") Sin copyright
             option(value="con_copyright") Con copyright
-            option(value="uso_libre") Uso libre
-            option(value="venta") Disponible para venta
 
         .mb-3
           label.form-label(for="imagen") Archivo de imagen
