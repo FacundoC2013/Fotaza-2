@@ -102,6 +102,12 @@ block contenido
                     span.ms-2 Abiertos
                   else
                     span.ms-2 Cerrados
+                    if usuario && publicacion.esAutor
+                  form.mt-2(method="POST", action=`/imagenes/${imagen.id_imagen}/comentarios/estado`)
+                    if imagen.comentarios_abiertos
+                      button.btn.btn-outline-danger.btn-sm(type="submit") Cerrar comentarios
+                    else
+                      button.btn.btn-outline-success.btn-sm(type="submit") Abrir comentarios
 
                 p
                   strong Valoración:

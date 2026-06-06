@@ -108,7 +108,57 @@ async function valorarImagen(req, res) {
   }
 }
 
+async function cambiarEstadoComentarios(req, res) {
+  try {
+    const idImagen = Number(req.params.id);
+    const idUsuario = Number(req.session.usuario.id_usuario);
+
+    if (!idImagen) {
+      return res.status(400).send("ID de imagen inválido");
+    }
+
+    const imagen = await Imagen.findByPk(idImagen, {
+      include: [
+        {
+          model: Publicacion,
+          as: "publicacion",
+          attributes: ["id_publicacion", "id_usuario"],
+        },
+      ],
+    });
+
+    if (!imagen) {
+      return res.status(404).send("Imagen no encontrada");
+    }
+
+    if (Number(imagen.publicacion.id_usuario) !== idUsuario) {
+      return res.redirect(
+        `/publicaciones/${imagen.id_publicacion}?error=${encodeURIComponent(
+          "Solo el autor puede cambiar el estado de los comentarios."
+        )}`
+      );
+    }
+
+    imagen.comentarios_abiertos = !imagen.comentarios_abiertos;
+    await imagen.save();
+
+    const mensaje = imagen.comentarios_abiertos
+      ? "Comentarios abiertos correctamente."
+      : "Comentarios cerrados correctamente.";
+
+    return res.redirect(
+      `/publicaciones/${imagen.id_publicacion}?exito=${encodeURIComponent(
+        mensaje
+      )}`
+    );
+  } catch (error) {
+    console.error("Error al cambiar estado de comentarios:", error);
+    return res.status(500).send("Error al cambiar el estado de comentarios");
+  }
+}
+
 module.exports = {
   comentarImagen,
   valorarImagen,
+  cambiarEstadoComentarios,
 };
