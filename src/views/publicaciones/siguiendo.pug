@@ -1,51 +1,49 @@
 extends ../layout
 
 block contenido
-  a.btn.btn-secondary.mb-3(href="/") Volver a la home
-
-  h1.mb-3 Publicaciones de usuarios que seguís
+  section.fotaza-header
+    p.fotaza-eyebrow Siguiendo
+    h1 Publicaciones de usuarios que seguís
+    p Acá aparecen las publicaciones activas de los autores que decidiste seguir.
 
   if !publicaciones || publicaciones.length === 0
     .alert.alert-info
       | Todavía no seguís usuarios con publicaciones activas.
   else
-    .row
+    .fotaza-grid
       each publicacion in publicaciones
-        .col-md-4.mb-4
-          .card.h-100
-            .card-body
-              h5.card-title= publicacion.titulo
+        article.fotaza-card
+          if publicacion.imagenes && publicacion.imagenes.length > 0
+            a.fotaza-image-link(href=`/publicaciones/${publicacion.id_publicacion}`)
+              img.fotaza-card-img(
+                src=publicacion.imagenes[0].ruta_archivo,
+                alt=publicacion.imagenes[0].titulo || "Imagen de la publicación"
+              )
+              span.fotaza-hover-btn Ver detalle
+          else
+            .fotaza-no-image Sin imagen
 
-              if publicacion.autor
-                p.mb-2
-                  strong Autor:
-                  |  
-                  a(href=`/usuarios/${publicacion.autor.id_usuario}`) #{publicacion.autor.nombre} #{publicacion.autor.apellido}
+          .fotaza-card-body
+            h2.fotaza-card-title= publicacion.titulo
 
-              if publicacion.descripcion
-                p.card-text= publicacion.descripcion
-              else
-                p.text-muted Sin descripción.
+            if publicacion.autor
+              p.fotaza-muted.mb-2
+                | Por 
+                a.fotaza-link(href=`/usuarios/${publicacion.autor.id_usuario}`) #{publicacion.autor.nombre} #{publicacion.autor.apellido}
 
-              if publicacion.imagenes && publicacion.imagenes.length > 0
-                img.img-fluid.rounded.mb-3(src=publicacion.imagenes[0].ruta_archivo, alt=publicacion.imagenes[0].titulo || "Imagen de la publicación")
+            if publicacion.imagenes && publicacion.imagenes.length > 0
+              if publicacion.imagenes[0].titulo
+                p.fotaza-muted.mb-2= publicacion.imagenes[0].titulo
 
-                p.mb-1
-                  strong Imagen principal:
-                  |  #{publicacion.imagenes[0].titulo || "Sin título"}
+              p.mb-2
+                span.fotaza-license= publicacion.imagenes[0].licencia
 
-                p.mb-1
-                  strong Licencia:
-                  |  #{publicacion.imagenes[0].licencia}
-              else
-                p.text-muted Sin imágenes cargadas.
+            if publicacion.descripcion
+              p.fotaza-card-text= publicacion.descripcion
+            else
+              p.fotaza-muted Sin descripción.
 
-              if publicacion.etiquetas && publicacion.etiquetas.length > 0
-                p.mt-2.mb-2
-                  strong Etiquetas:
-                .d-flex.flex-wrap.gap-2
-                  each etiqueta in publicacion.etiquetas
-                    a.badge.bg-secondary.text-decoration-none.me-1(href=`/publicaciones/buscar?q=${etiqueta.nombre}`)= etiqueta.nombre
-
-              .mt-3
-                a.btn.btn-primary.btn-sm(href=`/publicaciones/${publicacion.id_publicacion}`) Ver detalle
+            if publicacion.etiquetas && publicacion.etiquetas.length > 0
+              .d-flex.flex-wrap.gap-2.mt-3
+                each etiqueta in publicacion.etiquetas
+                  a.badge.fotaza-chip.text-decoration-none(href=`/publicaciones/buscar?q=${etiqueta.nombre}`)= etiqueta.nombre
