@@ -1,53 +1,46 @@
 extends layout
 
 block contenido
-  .mb-4
-    h1.mb-2 Fotaza 2
-    p.text-muted Comunidad para publicar, compartir y descubrir fotografías.
-
-  h2.mt-4 Publicaciones recientes
+  section.fotaza-header
+    p.fotaza-eyebrow Comunidad
+    h1 Explorar publicaciones
+    p Fotos compartidas por usuarios de Fotaza 2.
 
   if publicaciones.length === 0
     .alert.alert-info
-      | No hay publicaciones cargadas todavía.
+      | No hay publicaciones disponibles.
   else
-    .row
+    .fotaza-grid
       each publicacion in publicaciones
-        .col-md-4.mb-4
-          .card.h-100
-            .card-body
-              h5.card-title= publicacion.titulo
+        article.fotaza-card
+          if publicacion.imagenes && publicacion.imagenes.length > 0
+            a.fotaza-image-link(href=`/publicaciones/${publicacion.id_publicacion}`)
+              img.fotaza-card-img(
+                src=publicacion.imagenes[0].ruta_archivo,
+                alt=publicacion.imagenes[0].titulo || "Imagen de la publicación"
+              )
+              span.fotaza-hover-btn Ver detalle
+          else
+            .fotaza-no-image Sin imagen
 
-              if publicacion.imagenes && publicacion.imagenes.length > 0
-                img.img-fluid.rounded.mb-3(src=publicacion.imagenes[0].ruta_archivo, alt=publicacion.imagenes[0].titulo || "Imagen de la publicación")
+          .fotaza-card-body
+            h2.fotaza-card-title= publicacion.titulo
 
-                h6.card-subtitle.mb-2.text-muted= publicacion.imagenes[0].titulo
+            if publicacion.imagenes && publicacion.imagenes.length > 0
+              p.mb-2
+                span.fotaza-license= publicacion.imagenes[0].licencia
 
-                p.mb-1
-                  strong Licencia:
-                  |  #{publicacion.imagenes[0].licencia}
-              else
-                p.text-muted Sin imagen cargada
+            if publicacion.descripcion
+              p.fotaza-card-text= publicacion.descripcion
+            else
+              p.fotaza-muted Sin descripción.
 
-              if publicacion.descripcion
-                p.card-text= publicacion.descripcion
-              else
-                p.text-muted Sin descripción.
+            if publicacion.autor
+              p.fotaza-muted.mb-2
+                | Por 
+                a.fotaza-link(href=`/usuarios/${publicacion.autor.id_usuario}`) #{publicacion.autor.nombre} #{publicacion.autor.apellido}
 
-              if publicacion.autor
-                p.mb-1
-                  strong Autor:
-                  |  
-                  a(href=`/usuarios/${publicacion.autor.id_usuario}`) #{publicacion.autor.nombre} #{publicacion.autor.apellido}
-
-              if publicacion.etiquetas && publicacion.etiquetas.length > 0
-                p.mb-1
-                  strong Etiquetas:
-                .d-flex.flex-wrap.gap-2
-                  each etiqueta in publicacion.etiquetas
-                    a.badge.bg-secondary.text-decoration-none.me-1(href=`/publicaciones/buscar?q=${etiqueta.nombre}`)= etiqueta.nombre
-
-              small.text-muted= publicacion.fecha_creacion
-
-              .mt-3
-                a.btn.btn-primary.btn-sm(href=`/publicaciones/${publicacion.id_publicacion}`) Ver detalle
+            if publicacion.etiquetas && publicacion.etiquetas.length > 0
+              .d-flex.flex-wrap.gap-2
+                each etiqueta in publicacion.etiquetas
+                  a.badge.fotaza-chip.text-decoration-none(href=`/publicaciones/buscar?q=${etiqueta.nombre}`)= etiqueta.nombre

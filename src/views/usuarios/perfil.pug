@@ -7,25 +7,31 @@ block contenido
   if exito
     .alert.alert-success= exito
 
-  a.btn.btn-secondary.mb-3(href="/") Volver a la home
+  section.fotaza-profile-header
+    .fotaza-profile-main
+      .fotaza-profile-avatar-lg= perfil.nombre.charAt(0).toUpperCase()
 
-  .card.mb-4
-    .card-body
-      h1.card-title #{perfil.nombre} #{perfil.apellido}
+      .flex-grow-1
+        p.fotaza-eyebrow Perfil
+        h1 #{perfil.nombre} #{perfil.apellido}
 
-      if perfil.biografia
-        p.card-text= perfil.biografia
-      else
-        p.text-muted Este usuario no tiene biografía.
+        if perfil.biografia
+          p.fotaza-profile-bio= perfil.biografia
+        else
+          p.fotaza-muted Este usuario no tiene biografía.
 
-      .d-flex.gap-4.mt-3.mb-3
-        p.mb-0
-          strong Seguidores:
-          |  #{cantidadSeguidores}
-        p.mb-0
-          strong Seguidos:
-          |  #{cantidadSeguidos}
+        .fotaza-profile-stats
+          .fotaza-stat
+            strong #{cantidadSeguidores}
+            span Seguidores
+          .fotaza-stat
+            strong #{cantidadSeguidos}
+            span Seguidos
+          .fotaza-stat
+            strong #{perfil.publicaciones ? perfil.publicaciones.length : 0}
+            span Publicaciones
 
+    .fotaza-profile-actions
       if usuario && !esPerfilPropio
         if siguePerfil
           form(method="POST", action=`/usuarios/${perfil.id_usuario}/dejar-de-seguir`)
@@ -34,40 +40,41 @@ block contenido
         else
           form(method="POST", action=`/usuarios/${perfil.id_usuario}/seguir`)
             input(type="hidden", name="volverA", value=`/usuarios/${perfil.id_usuario}`)
-            button.btn.btn-outline-primary.btn-sm(type="submit") Seguir
+            button.btn.btn-fotaza.btn-sm(type="submit") Seguir
 
       if esPerfilPropio
-        p.text-muted.mt-3 Este es tu perfil.
+        span.fotaza-own-profile Este es tu perfil
 
-  h2 Publicaciones de #{perfil.nombre}
+  h2.fotaza-section-title Publicaciones
 
   if !perfil.publicaciones || perfil.publicaciones.length === 0
     .alert.alert-info
-      | Este usuario todavía no tiene publicaciones activas.
+      | Este usuario todavía no tiene publicaciones visibles.
   else
-    .row
+    .fotaza-grid
       each publicacion in perfil.publicaciones
-        .col-md-4.mb-4
-          .card.h-100
-            .card-body
-              h5.card-title= publicacion.titulo
+        article.fotaza-card
+          if publicacion.imagenes && publicacion.imagenes.length > 0
+            a.fotaza-image-link(href=`/publicaciones/${publicacion.id_publicacion}`)
+              img.fotaza-card-img(
+                src=publicacion.imagenes[0].ruta_archivo,
+                alt=publicacion.imagenes[0].titulo || "Imagen de la publicación"
+              )
+              span.fotaza-hover-btn Ver detalle
+          else
+            .fotaza-no-image Sin imagen
 
-              if publicacion.descripcion
-                p.card-text= publicacion.descripcion
-              else
-                p.text-muted Sin descripción.
+          .fotaza-card-body
+            h2.fotaza-card-title= publicacion.titulo
 
-              if publicacion.imagenes && publicacion.imagenes.length > 0
-                img.img-fluid.rounded.mb-3(src=publicacion.imagenes[0].ruta_archivo, alt=publicacion.imagenes[0].titulo || "Imagen de la publicación")
+            if publicacion.imagenes && publicacion.imagenes.length > 0
+              if publicacion.imagenes[0].titulo
+                p.fotaza-muted.mb-2= publicacion.imagenes[0].titulo
 
-                p.mb-1
-                  strong Imagen principal:
-                  | #{publicacion.imagenes[0].titulo || "Sin título"}
-                p.mb-1
-                  strong Licencia:
-                  | #{publicacion.imagenes[0].licencia}
-              else
-                p.text-muted Sin imágenes cargadas.
+              p.mb-2
+                span.fotaza-license= publicacion.imagenes[0].licencia
 
-              .mt-3
-                a.btn.btn-primary.btn-sm(href=`/publicaciones/${publicacion.id_publicacion}`) Ver detalle
+            if publicacion.descripcion
+              p.fotaza-card-text= publicacion.descripcion
+            else
+              p.fotaza-muted Sin descripción.

@@ -7,119 +7,132 @@ block contenido
   if exito
     .alert.alert-success= exito
 
-  a.btn.btn-secondary.mb-3(href="/") Volver a la home
+  section.fotaza-detail-header
+    a.fotaza-back-link(href="/") ← Volver al inicio
 
-  .card.mb-4
-    .card-body
-      h1.card-title= publicacion.titulo
-
-      if publicacion.descripcion
-        p.card-text= publicacion.descripcion
-      else
-        p.text-muted Sin descripción.
-
+    .fotaza-detail-title-row
       if publicacion.autor
-        p.mb-1
-          strong Autor:
-          |  
-          a(href=`/usuarios/${publicacion.autor.id_usuario}`) #{publicacion.autor.nombre} #{publicacion.autor.apellido}
-
-        if usuario && !publicacion.esAutor
-          .mt-3
-            if publicacion.sigueAutor
-              form(method="POST", action=`/usuarios/${publicacion.autor.id_usuario}/dejar-de-seguir`)
-                input(type="hidden", name="volverA", value=`/publicaciones/${publicacion.id_publicacion}`)
-                button.btn.btn-outline-danger.btn-sm(type="submit") Dejar de seguir
-            else
-              form(method="POST", action=`/usuarios/${publicacion.autor.id_usuario}/seguir`)
-                input(type="hidden", name="volverA", value=`/publicaciones/${publicacion.id_publicacion}`)
-                button.btn.btn-outline-primary.btn-sm(type="submit") Seguir
-
-      if publicacion.etiquetas && publicacion.etiquetas.length > 0
-        p.mt-3.mb-2
-          strong Etiquetas:
-        .d-flex.flex-wrap.gap-2
-          each etiqueta in publicacion.etiquetas
-            a.badge.bg-secondary.text-decoration-none.me-1(href=`/publicaciones/buscar?q=${etiqueta.nombre}`)= etiqueta.nombre
+        .fotaza-profile-avatar-sm= publicacion.autor.nombre.charAt(0).toUpperCase()
       else
-        p.text-muted Esta publicación no tiene etiquetas.
+        .fotaza-profile-avatar-sm U
 
-  h2 Imágenes de la publicación
+      .flex-grow-1
+        p.fotaza-eyebrow Publicación
+        h1= publicacion.titulo
+
+        if publicacion.autor
+          p.fotaza-muted.mb-0
+            | Por 
+            a.fotaza-link(href=`/usuarios/${publicacion.autor.id_usuario}`) #{publicacion.autor.nombre} #{publicacion.autor.apellido}
+
+    if publicacion.descripcion
+      p.fotaza-detail-description= publicacion.descripcion
+    else
+      p.fotaza-muted Sin descripción.
+
+    if publicacion.etiquetas && publicacion.etiquetas.length > 0
+      .d-flex.flex-wrap.gap-2.mt-3
+        each etiqueta in publicacion.etiquetas
+          a.badge.fotaza-chip.text-decoration-none(href=`/publicaciones/buscar?q=${etiqueta.nombre}`)= etiqueta.nombre
+    else
+      p.fotaza-muted.mt-3 Esta publicación no tiene etiquetas.
+
+    if publicacion.autor && usuario && !publicacion.esAutor
+      .mt-3
+        if publicacion.sigueAutor
+          form(method="POST", action=`/usuarios/${publicacion.autor.id_usuario}/dejar-de-seguir`)
+            input(type="hidden", name="volverA", value=`/publicaciones/${publicacion.id_publicacion}`)
+            button.btn.btn-outline-danger.btn-sm(type="submit") Dejar de seguir
+        else
+          form(method="POST", action=`/usuarios/${publicacion.autor.id_usuario}/seguir`)
+            input(type="hidden", name="volverA", value=`/publicaciones/${publicacion.id_publicacion}`)
+            button.btn.btn-fotaza.btn-sm(type="submit") Seguir autor
+
+  h2.fotaza-section-title Imágenes
 
   if !publicacion.imagenes || publicacion.imagenes.length === 0
     .alert.alert-info
-      | Esta publicación no tiene imágenes cargadas.
+      if usuario
+        | Esta publicación no tiene imágenes cargadas.
+      else
+        | Esta publicación no tiene imágenes públicas disponibles.
   else
-    .row
-      each imagen in publicacion.imagenes
-        .col-md-6.mb-4
-          .card.h-100
-            .card-body
-              h5.card-title= imagen.titulo || "Imagen sin título"
-
+    each imagen in publicacion.imagenes
+      .fotaza-detail-card
+        .row.g-4
+          .col-lg-7
+            .fotaza-detail-image-box
               if imagen.ruta_archivo
-                img.img-fluid.rounded.mb-3(src=imagen.ruta_archivo, alt=imagen.titulo || "Imagen de la publicación")
-
-              if imagen.descripcion
-                p.card-text= imagen.descripcion
-
-              p.mb-1
-                strong Ruta:
-                |  #{imagen.ruta_archivo}
-
-              p.mb-1
-                strong Licencia:
-                |  #{imagen.licencia}
+                img.fotaza-detail-img(
+                  src=imagen.ruta_archivo,
+                  alt=imagen.titulo || "Imagen de la publicación"
+                )
 
               if imagen.marca_agua
-                p.mb-1
-                  strong Marca de agua:
-                  |  Sí
-                if imagen.texto_marca_agua
-                  p.mb-1
-                    strong Texto:
-                    |  #{imagen.texto_marca_agua}
+                .fotaza-watermark
+                  if imagen.texto_marca_agua
+                    | #{imagen.texto_marca_agua}
+                  else
+                    | Fotaza 2
+
+          .col-lg-5
+            .fotaza-detail-info
+              h3= imagen.titulo || "Imagen sin título"
+
+              if imagen.descripcion
+                p= imagen.descripcion
               else
-                p.mb-1
+                p.fotaza-muted Sin descripción.
+
+              .fotaza-info-list
+                p
+                  strong Licencia:
+                  span.fotaza-license.ms-2= imagen.licencia
+
+                p
                   strong Marca de agua:
-                  |  No
+                  if imagen.marca_agua
+                    span.ms-2 Sí
+                  else
+                    span.ms-2 No
 
-              p.mb-1
-                strong Comentarios:
-                if imagen.comentarios_abiertos
-                  |  abiertos
-                else
-                  |  cerrados
+                p
+                  strong Comentarios:
+                  if imagen.comentarios_abiertos
+                    span.ms-2 Abiertos
+                  else
+                    span.ms-2 Cerrados
 
-              p.mb-1
-                strong Valoración:
-                if imagen.promedioValoraciones
-                  |  #{imagen.promedioValoraciones} / 5
-                else
-                  |  Sin valoraciones todavía
+                p
+                  strong Valoración:
+                  if imagen.promedioValoraciones
+                    span.ms-2 #{imagen.promedioValoraciones} / 5
+                  else
+                    span.ms-2 Sin valoraciones
 
-              p.mb-1
-                strong Cantidad de votos:
-                |  #{imagen.cantidadValoraciones}
+                p
+                  strong Votos:
+                  span.ms-2 #{imagen.cantidadValoraciones}
 
               hr
 
-              h6 Comentarios
+              h4 Comentarios
 
               if imagen.comentarios && imagen.comentarios.length > 0
-                each comentario in imagen.comentarios
-                  .border.rounded.p-2.mb-2
-                    if comentario.autorComentario
-                      strong #{comentario.autorComentario.nombre} #{comentario.autorComentario.apellido}
-                    else
-                      strong Usuario
-                    p.mb-0= comentario.texto
+                .fotaza-comments
+                  each comentario in imagen.comentarios
+                    .fotaza-comment
+                      if comentario.autorComentario
+                        strong #{comentario.autorComentario.nombre} #{comentario.autorComentario.apellido}
+                      else
+                        strong Usuario
+                      p.mb-0= comentario.texto
               else
-                p.text-muted Todavía no hay comentarios para esta imagen.
+                p.fotaza-muted Todavía no hay comentarios.
 
               if usuario
                 if imagen.comentarios_abiertos
-                  form(method="POST", action=`/imagenes/${imagen.id_imagen}/comentarios`)
+                  form.mt-3(method="POST", action=`/imagenes/${imagen.id_imagen}/comentarios`)
                     .mb-2
                       label.form-label(for=`comentario-${imagen.id_imagen}`) Agregar comentario
                       textarea.form-control(
@@ -128,24 +141,24 @@ block contenido
                         rows="2",
                         required
                       )
-                    button.btn.btn-outline-primary.btn-sm(type="submit") Comentar
+                    button.btn.btn-outline-dark.btn-sm(type="submit") Comentar
                 else
-                  p.text-muted Los comentarios de esta imagen estan cerrados.
+                  p.fotaza-muted Los comentarios de esta imagen están cerrados.
               else
-                p.text-muted
-                  | Para comentar tenes que 
-                  a(href="/login") iniciar sesion
+                p.fotaza-muted
+                  | Para comentar tenés que 
+                  a.fotaza-link(href="/login") iniciar sesión
                   | .
 
               hr
 
-              h6 Valorar imagen
+              h4 Valorar imagen
 
               if usuario
                 if publicacion.esAutor
-                  p.text-muted No podes valorar una imagen de tu propia publicacion.
+                  p.fotaza-muted No podés valorar una imagen de tu propia publicación.
                 else if imagen.yaValoro
-                  p.text-muted Ya valoraste esta imagen.
+                  p.fotaza-muted Ya valoraste esta imagen.
                 else
                   form(method="POST", action=`/imagenes/${imagen.id_imagen}/valoraciones`)
                     .mb-2
@@ -161,12 +174,12 @@ block contenido
                         option(value="3") 3 - Regular
                         option(value="4") 4 - Muy buena
                         option(value="5") 5 - Excelente
-                    button.btn.btn-outline-success.btn-sm(type="submit") Valorar imagen
+                    button.btn.btn-fotaza.btn-sm(type="submit") Valorar imagen
               else
-                p.text-muted
-                  | Para valorar tenes que 
-                  a(href="/login") iniciar sesion
+                p.fotaza-muted
+                  | Para valorar tenés que 
+                  a.fotaza-link(href="/login") iniciar sesión
                   | .
 
               .mt-3
-                button.btn.btn-outline-warning.btn-sm(type="button", disabled) Me interesa
+                button.btn.btn-outline-secondary.btn-sm(type="button", disabled) Me interesa

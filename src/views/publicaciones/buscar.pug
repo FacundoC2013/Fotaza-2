@@ -1,27 +1,31 @@
 extends ../layout
 
 block contenido
-  a.btn.btn-secondary.mb-3(href="/") Volver a la home
+  section.fotaza-header
+    p.fotaza-eyebrow Búsqueda
+    h1 Buscar publicaciones
+    p Encontrá fotos por texto, licencia, etiqueta o valoración.
 
-  h1.mb-3 Buscar publicaciones
-
-  form(method="GET", action="/publicaciones/buscar").mb-4
-    .row.g-2
+  form.fotaza-filter-panel(method="GET", action="/publicaciones/buscar")
+    .row.g-3.align-items-end
       .col-md-4
+        label.fotaza-filter-label Texto
         input.form-control(
           type="text",
           name="q",
-          placeholder="Buscar por título, autor, imagen o etiqueta..."
+          placeholder="Título, autor, imagen o etiqueta..."
           value=busqueda || ""
         )
 
       .col-md-3
+        label.fotaza-filter-label Licencia
         select.form-select(name="licencia")
-          option(value="") Todas las licencias
+          option(value="") Todas
           option(value="sin_copyright", selected=licencia === "sin_copyright") Sin copyright
           option(value="con_copyright", selected=licencia === "con_copyright") Con copyright
 
       .col-md-3
+        label.fotaza-filter-label Orden
         select.form-select(name="orden")
           option(value="recientes", selected=orden === "recientes") Más recientes
           option(value="antiguas", selected=orden === "antiguas") Más antiguas
@@ -29,78 +33,75 @@ block contenido
           option(value="mejor_valoradas", selected=orden === "mejor_valoradas") Mejor valoradas
 
       .col-md-2
-        button.btn.btn-primary.w-100(type="submit") Buscar
+        button.btn.btn-fotaza.w-100(type="submit") Buscar
 
     if etiqueta
       input(type="hidden", name="etiqueta", value=etiqueta)
 
-  .mb-3
-    a.btn.btn-outline-secondary.btn-sm(href="/publicaciones/buscar") Limpiar filtros
-
-    if busqueda || licencia || etiqueta || (orden && orden !== "recientes")
-    .alert.alert-light.border
-      strong Filtros aplicados:
+  if busqueda || licencia || etiqueta || (orden && orden !== "recientes")
+    .fotaza-applied-filters
+      strong Filtros:
       if busqueda
-        span.ms-2 Texto: "#{busqueda}"
+        span Texto: "#{busqueda}"
       if licencia
-        span.ms-2 Licencia: #{licencia}
+        span Licencia: #{licencia}
       if etiqueta
-        span.ms-2 Etiqueta: #{etiqueta}
+        span Etiqueta: #{etiqueta}
       if orden
-        span.ms-2 Orden: #{orden}
+        span Orden: #{orden}
+      a(href="/publicaciones/buscar") Limpiar
 
   if mensaje
     .alert.alert-info= mensaje
 
   if publicaciones && publicaciones.length > 0
-    h2.mb-3 Resultados encontrados
+    h2.fotaza-section-title Resultados encontrados
 
-    .row
+    .fotaza-grid
       each publicacion in publicaciones
-        .col-md-4.mb-4
-          .card.h-100
-            .card-body
-              h5.card-title= publicacion.titulo
+        article.fotaza-card
+          if publicacion.imagenes && publicacion.imagenes.length > 0
+            a.fotaza-image-link(href=`/publicaciones/${publicacion.id_publicacion}`)
+              img.fotaza-card-img(
+                src=publicacion.imagenes[0].ruta_archivo,
+                alt=publicacion.imagenes[0].titulo || "Imagen de la publicación"
+              )
+              span.fotaza-hover-btn Ver detalle
+          else
+            .fotaza-no-image Sin imagen
 
-              if publicacion.imagenes && publicacion.imagenes.length > 0
-                img.img-fluid.rounded.mb-3(src=publicacion.imagenes[0].ruta_archivo, alt=publicacion.imagenes[0].titulo || "Imagen de la publicación")
+          .fotaza-card-body
+            h2.fotaza-card-title= publicacion.titulo
 
-                h6.card-subtitle.mb-2.text-muted= publicacion.imagenes[0].titulo
+            if publicacion.imagenes && publicacion.imagenes.length > 0
+              if publicacion.imagenes[0].titulo
+                p.fotaza-muted.mb-2= publicacion.imagenes[0].titulo
 
-                p.mb-1
-                  strong Licencia:
-                  |  #{publicacion.imagenes[0].licencia}
-              else
-                p.text-muted Sin imagen cargada
+              p.mb-2
+                span.fotaza-license= publicacion.imagenes[0].licencia
 
-              if publicacion.descripcion
-                p.card-text= publicacion.descripcion
-              else
-                p.text-muted Sin descripción.
+            if publicacion.descripcion
+              p.fotaza-card-text= publicacion.descripcion
+            else
+              p.fotaza-muted Sin descripción.
 
-              if publicacion.autor
-                p.mb-1
-                  strong Autor:
-                  |  
-                  a(href=`/usuarios/${publicacion.autor.id_usuario}`) #{publicacion.autor.nombre} #{publicacion.autor.apellido}
+            if publicacion.autor
+              p.fotaza-muted.mb-2
+                | Por 
+                a.fotaza-link(href=`/usuarios/${publicacion.autor.id_usuario}`) #{publicacion.autor.nombre} #{publicacion.autor.apellido}
 
-              p.mb-1
+            .fotaza-card-stats
+              span
                 strong Valoración:
                 if publicacion.cantidadValoraciones > 0
                   |  #{publicacion.promedioValoracion.toFixed(1)} / 5
                 else
-                  |  Sin valoraciones
-
-              p.mb-1
+                  |  Sin votos
+              span
                 strong Votos:
                 |  #{publicacion.cantidadValoraciones}
 
-              if publicacion.etiquetas && publicacion.etiquetas.length > 0
-                p.mb-1
-                  strong Etiquetas:
-                .d-flex.flex-wrap.gap-2
-                  each etiquetaItem in publicacion.etiquetas
-                    a.badge.bg-secondary.text-decoration-none.me-1(href="/publicaciones/buscar?etiqueta=" + encodeURIComponent(etiquetaItem.nombre))= etiquetaItem.nombre
-
-              .mt-3
-                a.btn.btn-primary.btn-sm(href=`/publicaciones/${publicacion.id_publicacion}`) Ver detalle
+            if publicacion.etiquetas && publicacion.etiquetas.length > 0
+              .d-flex.flex-wrap.gap-2.mt-3
+                each etiquetaItem in publicacion.etiquetas
+                  a.badge.fotaza-chip.text-decoration-none(href="/publicaciones/buscar?etiqueta=" + encodeURIComponent(etiquetaItem.nombre))= etiquetaItem.nombre

@@ -1,9 +1,11 @@
 extends ../layout
 
 block contenido
-  .row.justify-content-center
-    .col-md-5
-      h1.mb-4 Iniciar sesión
+  .fotaza-auth-wrapper
+    .fotaza-auth-card
+      p.fotaza-eyebrow Cuenta
+      h1 Iniciar sesión
+      p.fotaza-auth-subtitle Accedé para publicar, comentar, valorar y seguir autores.
 
       if error
         .alert.alert-danger= error
@@ -11,16 +13,28 @@ block contenido
       form(method="POST", action="/login")
         .mb-3
           label.form-label(for="email") Email
-          input.form-control(type="email", name="email", id="email", required)
+          input.form-control(
+            type="email",
+            name="email",
+            id="email",
+            placeholder="tu@email.com",
+            required
+          )
 
         .mb-3
           label.form-label(for="password") Contraseña
-          input.form-control(type="password", name="password", id="password", required)
+          input.form-control(
+            type="password",
+            name="password",
+            id="password",
+            placeholder="Tu contraseña",
+            required
+          )
 
-        button.btn.btn-primary(type="submit") Entrar
+        button.btn.btn-fotaza.w-100(type="submit") Entrar
 
-      .mt-3
-        p.text-muted Usuarios de prueba:
+      .fotaza-test-users
+        p Usuarios de prueba
         ul
           li facundo@fotaza.com / 123456
           li jaquelina@fotaza.com / 123456
