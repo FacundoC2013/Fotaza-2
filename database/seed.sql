@@ -68,13 +68,14 @@ INSERT INTO publicaciones (
     titulo,
     descripcion,
     estado,
-    permite_editar
+    permite_editar,
+    fecha_creacion
 ) VALUES
-(1, 1, 'Paisajes de La Punta', 'Una serie de fotos tomadas en La Punta, San Luis, mostrando el cielo, las sierras y espacios abiertos.', 'activa', TRUE),
-(2, 3, 'Arquitectura de Buenos Aires', 'Fotografías urbanas de edificios, calles y detalles arquitectónicos de Buenos Aires.', 'activa', TRUE),
-(3, 6, 'El arte de Momma', 'Una publicación inspirada en el arte, los colores y las composiciones visuales.', 'activa', TRUE),
-(4, 7, 'Ciudad de noche', 'Fotos nocturnas con luces, calles y movimiento urbano.', 'activa', TRUE),
-(5, 8, 'Paisajes de San Luis', 'Imágenes de naturaleza, sierras y rincones tranquilos de San Luis.', 'activa', TRUE);
+(1, 1, 'Paisajes de La Punta', 'Una serie de fotos tomadas en La Punta, San Luis, mostrando el cielo, las sierras y espacios abiertos.', 'activa', TRUE, '2026-05-01 10:00:00'),
+(2, 6, 'Arquitectura de Buenos Aires', 'Fotografías urbanas de edificios, calles y detalles arquitectónicos de Buenos Aires.', 'activa', TRUE, '2026-05-03 12:00:00'),
+(3, 3, 'El arte de Momma', 'Una publicación inspirada en el arte, los colores y las composiciones visuales.', 'activa', TRUE, '2026-05-05 14:00:00'),
+(4, 7, 'Ciudad de noche', 'Fotos nocturnas con luces, calles y movimiento urbano.', 'activa', TRUE, '2026-05-07 20:00:00'),
+(5, 8, 'Paisajes de San Luis', 'Imágenes de naturaleza, sierras y rincones tranquilos de San Luis.', 'activa', TRUE, '2026-05-09 09:00:00');
 
 INSERT INTO imagenes (
     id_imagen,
@@ -88,7 +89,7 @@ INSERT INTO imagenes (
     comentarios_abiertos
 ) VALUES
 (1, 1, 'Sierras de La Punta', 'Vista abierta de las sierras y el cielo de La Punta.', '/uploads/imagenes/seed/paisajes-la-punta-1.jpg', 'sin_copyright', FALSE, NULL, TRUE),
-(2, 1, 'Camino en La Punta', 'Camino con vista al paisaje puntano.', '/uploads/imagenes/seed/paisajes-la-punta-2.jpg', 'sin_copyright', FALSE, NULL, TRUE),
+(2, 1, 'Cabildo en La Punta', 'Cabildo y vista al paisaje puntano.', '/uploads/imagenes/seed/paisajes-la-punta-2.jpg', 'sin_copyright', FALSE, NULL, TRUE),
 (3, 2, 'Edificio histórico', 'Detalle arquitectónico de Buenos Aires.', '/uploads/imagenes/seed/arquitectura-buenos-aires-1.jpg', 'con_copyright', TRUE, 'Candela Garcia', TRUE),
 (4, 3, 'Momma colores', 'Imagen artística con composición de colores.', '/uploads/imagenes/seed/arte-momma-1.jpg', 'con_copyright', TRUE, 'Candela Garcia', TRUE),
 (5, 4, 'Luces de ciudad', 'Fotografía nocturna de una ciudad iluminada.', '/uploads/imagenes/seed/ciudad-noche-1.jpg', 'sin_copyright', FALSE, NULL, TRUE),
