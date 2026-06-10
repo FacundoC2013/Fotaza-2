@@ -31,6 +31,7 @@ app.use(
 // Middleware propio para que todas las vistas PUG sepan si hay usuario logueado
 app.use((req, res, next) => {
   res.locals.usuario = req.session.usuario || null;
+  res.locals.rutaActual = req.path;
   next();
 });
 

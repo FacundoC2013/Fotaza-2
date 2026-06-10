@@ -90,7 +90,7 @@ INSERT INTO imagenes (
 ) VALUES
 (1, 1, 'Sierras de La Punta', 'Vista abierta de las sierras y el cielo de La Punta.', '/uploads/imagenes/seed/paisajes-la-punta-1.jpg', 'sin_copyright', FALSE, NULL, TRUE),
 (2, 1, 'Cabildo en La Punta', 'Cabildo y vista al paisaje puntano.', '/uploads/imagenes/seed/paisajes-la-punta-2.jpg', 'sin_copyright', FALSE, NULL, TRUE),
-(3, 2, 'Edificio histórico', 'Detalle arquitectónico de Buenos Aires.', '/uploads/imagenes/seed/arquitectura-buenos-aires-1.jpg', 'con_copyright', TRUE, 'Candela Garcia', TRUE),
+(3, 2, 'Edificio histórico', 'Detalle arquitectónico de Buenos Aires.', '/uploads/imagenes/seed/arquitectura-buenos-aires-1.jpg', 'con_copyright', TRUE, 'Valentin Casas', TRUE),
 (4, 3, 'Momma colores', 'Imagen artística con composición de colores.', '/uploads/imagenes/seed/arte-momma-1.jpg', 'con_copyright', TRUE, 'Candela Garcia', TRUE),
 (5, 4, 'Luces de ciudad', 'Fotografía nocturna de una ciudad iluminada.', '/uploads/imagenes/seed/ciudad-noche-1.jpg', 'sin_copyright', FALSE, NULL, TRUE),
 (6, 5, 'Paisaje serrano', 'Paisaje natural de San Luis.', '/uploads/imagenes/seed/paisajes-san-luis-1.jpg', 'sin_copyright', FALSE, NULL, TRUE);
