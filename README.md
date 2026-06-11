@@ -258,6 +258,10 @@ Esta versión permite probar los módulos principales solicitados para regulariz
 * valoración de imágenes;
 * seguimiento de usuarios.
 
+## Enlaces del proyecto
+
+- Repositorio GitHub: https://github.com/FacundoC2013/Fotaza-2
+- Aplicación desplegada: https://fotaza-2-e7id.onrender.com
 
 ## Estado del proyecto
 
