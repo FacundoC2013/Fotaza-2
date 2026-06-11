@@ -14,13 +14,20 @@ async function ejecutarArchivoSQL(connection, rutaArchivo) {
 async function inicializarBaseDeDatos() {
   let connection;
 
-  try {
+      try {
+      const usarSSL = process.env.DB_SSL === "true";
+
     connection = await mysql.createConnection({
       host: process.env.DB_HOST,
       port: Number(process.env.DB_PORT),
       user: process.env.DB_USER,
       password: process.env.DB_PASSWORD,
       multipleStatements: true,
+      ssl: usarSSL
+        ? {
+            rejectUnauthorized: false,
+          }
+        : undefined,
     });
 
     const schemaPath = path.join(__dirname, "..", "database", "schema.sql");
