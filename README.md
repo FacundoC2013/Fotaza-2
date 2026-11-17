@@ -265,4 +265,29 @@ Esta versión permite probar los módulos principales solicitados para regulariz
 
 ## Estado del proyecto
 
+### Protección de imágenes y prueba local del final
+
+Las URLs `/uploads/imagenes/...` se entregan mediante un controlador: requieren
+una imagen registrada y una publicación que no esté dada de baja. Las imágenes sin copyright son
+públicas; las que tienen copyright requieren sesión. Solo las publicaciones
+con estado `bajada` impiden ver el detalle, entregar archivos, comentar, valorar
+o cambiar el estado de comentarios. `bloqueada_por_denuncia` y
+`permite_editar = false` no impiden la visualización ni esas interacciones:
+el bloqueo corresponde a la edición, cuyo módulo todavía no está implementado.
+No hay excepciones por rol en esta etapa.
+Solo `/css` se sirve como carpeta estática. La marca de agua conserva su
+comportamiento visual anterior.
+
+Prueba automática, después de instalar las dependencias:
+
+```bash
+node --test test/proteccion-imagenes.test.js
+```
+
+La prueba inicia Express en un puerto local temporal, sustituye los modelos por
+datos en memoria y lee las imágenes seed existentes. No carga `.env`, no conecta
+con MySQL y no crea, modifica ni borra datos o archivos de imágenes. Verifica
+HTTP y renderizado PUG; no reemplaza la comprobación con una base local ni la
+revisión visual en navegador.
+
 El proyecto se encuentra en una versión funcional para regularización, con los módulos principales implementados y datos de prueba cargados mediante el script de inicialización.

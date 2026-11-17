@@ -8,6 +8,7 @@ const authRoutes = require("./routes/auth.routes");
 const publicacionesRoutes = require("./routes/publicaciones.routes");
 const imagenesRoutes = require("./routes/imagenes.routes");
 const usuariosRoutes = require("./routes/usuarios.routes");
+const { servirArchivoImagen } = require("./controllers/imagenController");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -35,8 +36,9 @@ app.use((req, res, next) => {
   next();
 });
 
-// Archivos estáticos
-app.use(express.static(path.join(__dirname, "public")));
+// Solo CSS es público sin autorización. Los uploads nunca pasan por static.
+app.use("/css", express.static(path.join(__dirname, "public/css")));
+app.use("/uploads/imagenes", servirArchivoImagen);
 
 // Rutas
 app.use("/", indexRoutes);
@@ -49,6 +51,10 @@ app.use((req, res) => {
   res.status(404).send("Página no encontrada");
 });
 
-app.listen(PORT, () => {
-  console.log(`Servidor iniciado en http://localhost:${PORT}`);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Servidor iniciado en http://localhost:${PORT}`);
+  });
+}
+
+module.exports = app;

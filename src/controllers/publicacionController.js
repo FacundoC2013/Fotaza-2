@@ -74,7 +74,7 @@ async function verDetallePublicacion(req, res) {
       ],
     });
 
-    if (!publicacionDB) {
+    if (!publicacionDB || publicacionDB.estado === "bajada") {
       return res.status(404).send("Publicacion no encontrada");
     }
 
@@ -168,7 +168,7 @@ async function verPublicacionesSeguidos(req, res) {
 
     const publicacionesDB = await Publicacion.findAll({
       where: {
-        estado: "activa",
+        estado: { [Op.ne]: "bajada" },
         id_usuario: {
           [Op.in]: idsSeguidos,
         },
@@ -373,7 +373,7 @@ async function buscarPublicaciones(req, res) {
 
     const publicacionesDB = await Publicacion.findAll({
       where: {
-        estado: "activa",
+        estado: { [Op.ne]: "bajada" },
       },
       include: [
         {

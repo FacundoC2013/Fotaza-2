@@ -1,4 +1,5 @@
 const { Usuario, Seguidor, Publicacion, Imagen } = require("../models");
+const { Op } = require("sequelize");
 
 function obtenerRutaRetorno(req) {
   const volverA = req.body.volverA;
@@ -44,7 +45,7 @@ async function verPerfil(req, res) {
           model: Publicacion,
           as: "publicaciones",
           where: {
-            estado: "activa",
+            estado: { [Op.ne]: "bajada" },
           },
           required: false,
           attributes: [

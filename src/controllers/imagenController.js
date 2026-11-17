@@ -1,4 +1,58 @@
 const { Imagen, Comentario, Valoracion, Publicacion } = require("../models");
+const path = require("path");
+
+// Conserva las URLs existentes, pero autoriza cada entrega antes de leer el archivo.
+async function servirArchivoImagen(req, res) {
+  res.set("Cache-Control", "private, no-store");
+  res.set("X-Content-Type-Options", "nosniff");
+  res.vary("Cookie");
+
+  if (req.method !== "GET" && req.method !== "HEAD") {
+    return res.status(405).set("Allow", "GET, HEAD").send("Método no permitido");
+  }
+
+  let ruta;
+  try {
+    ruta = decodeURIComponent(req.path);
+  } catch {
+    return res.status(400).send("Ruta inválida");
+  }
+
+  // Solo archivos de imagen en la carpeta de uploads o su subcarpeta seed.
+  if (!/^\/(?:seed\/)?[a-zA-Z0-9_-]+\.(?:jpg|jpeg|png|webp)$/i.test(ruta)) {
+    return res.status(404).send("Imagen no encontrada");
+  }
+
+  try {
+    const imagen = await Imagen.findOne({
+      where: { ruta_archivo: `/uploads/imagenes${ruta}` },
+      include: [{ model: Publicacion, as: "publicacion" }],
+    });
+
+    if (!imagen || !imagen.publicacion || imagen.publicacion.estado === "bajada") {
+      return res.status(404).send("Imagen no encontrada");
+    }
+    if (imagen.licencia !== "sin_copyright" &&
+        (imagen.licencia !== "con_copyright" || !req.session.usuario)) {
+      return res.status(403).send("Acceso no permitido");
+    }
+
+    return res.sendFile(ruta.slice(1), {
+      root: path.join(__dirname, "../public/uploads/imagenes"),
+      dotfiles: "deny",
+      cacheControl: false,
+      lastModified: false,
+      acceptRanges: false,
+    }, (error) => {
+      if (error && !res.headersSent) {
+        res.status(error.statusCode === 404 ? 404 : 500).send("Imagen no disponible");
+      }
+    });
+  } catch (error) {
+    console.error("Error al entregar imagen:", error);
+    return res.status(500).send("Error al cargar imagen");
+  }
+}
 
 async function comentarImagen(req, res) {
   try {
@@ -14,9 +68,11 @@ async function comentarImagen(req, res) {
       return res.status(400).send("El comentario no puede estar vacío");
     }
 
-    const imagen = await Imagen.findByPk(idImagen);
+    const imagen = await Imagen.findByPk(idImagen, {
+      include: [{ model: Publicacion, as: "publicacion" }],
+    });
 
-    if (!imagen) {
+    if (!imagen || !imagen.publicacion || imagen.publicacion.estado === "bajada") {
       return res.status(404).send("Imagen no encontrada");
     }
 
@@ -58,12 +114,12 @@ async function valorarImagen(req, res) {
         {
           model: Publicacion,
           as: "publicacion",
-          attributes: ["id_publicacion", "id_usuario"],
+          attributes: ["id_publicacion", "id_usuario", "estado"],
         },
       ],
     });
 
-    if (!imagen) {
+    if (!imagen || !imagen.publicacion || imagen.publicacion.estado === "bajada") {
       return res.status(404).send("Imagen no encontrada");
     }
 
@@ -122,12 +178,12 @@ async function cambiarEstadoComentarios(req, res) {
         {
           model: Publicacion,
           as: "publicacion",
-          attributes: ["id_publicacion", "id_usuario"],
+          attributes: ["id_publicacion", "id_usuario", "estado"],
         },
       ],
     });
 
-    if (!imagen) {
+    if (!imagen || !imagen.publicacion || imagen.publicacion.estado === "bajada") {
       return res.status(404).send("Imagen no encontrada");
     }
 
@@ -158,6 +214,7 @@ async function cambiarEstadoComentarios(req, res) {
 }
 
 module.exports = {
+  servirArchivoImagen,
   comentarImagen,
   valorarImagen,
   cambiarEstadoComentarios,

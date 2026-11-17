@@ -1,10 +1,11 @@
 const { Publicacion, Imagen, Usuario, Etiqueta } = require("../models");
+const { Op } = require("sequelize");
 
 async function mostrarHome(req, res) {
   try {
     const publicacionesDB = await Publicacion.findAll({
       where: {
-        estado: "activa",
+        estado: { [Op.ne]: "bajada" },
       },
       include: [
         {
